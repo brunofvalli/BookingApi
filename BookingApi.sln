@@ -5,6 +5,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "BookingApi.WebHost", "Booki
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "BookingApi.UnitTests", "BookingApi.UnitTests\BookingApi.UnitTests.fsproj", "{6A4B21DD-9EAB-4E1A-9443-36D9A5E01C1C}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "BookingApi", "BookingApi\BookingApi.fsproj", "{3905A7AE-F4E6-484D-A0B0-1039E6DD4BA5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{6A4B21DD-9EAB-4E1A-9443-36D9A5E01C1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6A4B21DD-9EAB-4E1A-9443-36D9A5E01C1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6A4B21DD-9EAB-4E1A-9443-36D9A5E01C1C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3905A7AE-F4E6-484D-A0B0-1039E6DD4BA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3905A7AE-F4E6-484D-A0B0-1039E6DD4BA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3905A7AE-F4E6-484D-A0B0-1039E6DD4BA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3905A7AE-F4E6-484D-A0B0-1039E6DD4BA5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
