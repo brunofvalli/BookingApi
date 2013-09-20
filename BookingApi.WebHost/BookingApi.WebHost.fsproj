@@ -82,9 +82,9 @@
   </ProjectExtensions>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="web.config" />
+    <Content Include="web.config" />
     <Compile Include="Infrastructure.fs" />
-    <None Include="Global.asax" />
+    <Content Include="Global.asax" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Web.Infrastructure">
