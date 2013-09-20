@@ -1,4 +1,4 @@
-﻿module Ploeh.Samples.Booking.HttpApi.Controllers
+﻿namespace Ploeh.Samples.Booking.HttpApi.Controllers
 
 open System.Web.Http
 
