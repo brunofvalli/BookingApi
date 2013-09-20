@@ -1,0 +1,1 @@
+namespace Ploeh.Samples.Booking.HttpApi.HttpHost
