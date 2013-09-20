@@ -9,4 +9,4 @@ let private factory =
         MethodInvoker(ModestConstructorQuery()),
         TerminatingSpecimenBuilder())
 
-let inSetOf<'T> = Generator<'T>(factory) :> 'T seq
+let pool<'T> = Generator<'T>(factory) :> 'T seq
