@@ -1,8 +1,9 @@
 ﻿namespace Ploeh.Samples.Booking.HttpApi.UnitTests
 
+open System.Net
 open System.Net.Http
 open System.Web.Http
-open Ploeh.Samples.Booking.HttpApi.Controllers
+open Ploeh.Samples.Booking.HttpApi
 open Ploeh.Samples.Booking.HttpApi.UnitTests.Infrastructure
 open Xunit
 
@@ -27,3 +28,12 @@ module ReservationRequestsControllerTests =
     let SutIsController() =
         let sut = pool<ReservationsController> |> Seq.head
         Assert.IsAssignableFrom<ApiController>(sut)
+
+    [<Fact>]
+    let PostReturnsCorrectResult() =
+        let sut = pool<ReservationsController> |> Seq.head
+        let rendition = pool<MakeReservationRendition> |> Seq.head
+        
+        let actual : HttpResponseMessage = sut.Post rendition
+
+        Assert.Equal(HttpStatusCode.Accepted, actual.StatusCode)

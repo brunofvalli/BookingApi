@@ -1,5 +1,6 @@
-﻿namespace Ploeh.Samples.Booking.HttpApi.Controllers
+﻿namespace Ploeh.Samples.Booking.HttpApi
 
+open System.Net
 open System.Net.Http
 open System.Web.Http
 
@@ -9,3 +10,5 @@ type HomeController() =
 
 type ReservationsController() =
     inherit ApiController()
+    member this.Post rendition =
+        new HttpResponseMessage(HttpStatusCode.Accepted)

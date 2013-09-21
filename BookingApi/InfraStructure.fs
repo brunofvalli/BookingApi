@@ -1,7 +1,7 @@
 ﻿module Ploeh.Samples.Booking.HttpApi.InfraStructure
 
 open System.Web.Http
-open Ploeh.Samples.Booking.HttpApi.Controllers
+open Ploeh.Samples.Booking.HttpApi
 
 type HttpRouteDefaults = { Controller : string; Id : obj }
 
