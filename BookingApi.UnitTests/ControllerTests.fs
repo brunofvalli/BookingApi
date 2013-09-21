@@ -21,3 +21,9 @@ module HomeControllerTests =
         Assert.True(
             actual.IsSuccessStatusCode,
             "Actual status code: " + actual.StatusCode.ToString())
+
+module ReservationRequestsControllerTests =
+    [<Fact>]
+    let SutIsController() =
+        let sut = pool<ReservationsController> |> Seq.head
+        Assert.IsAssignableFrom<ApiController>(sut)

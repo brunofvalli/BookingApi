@@ -6,3 +6,6 @@ open System.Web.Http
 type HomeController() =
     inherit ApiController()
     member this.Get() = new HttpResponseMessage()
+
+type ReservationsController() =
+    inherit ApiController()
