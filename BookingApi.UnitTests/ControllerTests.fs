@@ -10,12 +10,12 @@ open Xunit
 module HomeControllerTests =
     [<Fact>]
     let SutIsController() =
-        let sut = pool<HomeController> |> Seq.head
+        let sut = Pool<HomeController> |> Seq.head
         Assert.IsAssignableFrom<ApiController>(sut)
 
     [<Fact>]
     let GetReturnsCorrectResult() =
-        let sut = pool<HomeController> |> Seq.head
+        let sut = Pool<HomeController> |> Seq.head
     
         let actual : HttpResponseMessage = sut.Get()
     
@@ -26,13 +26,13 @@ module HomeControllerTests =
 module ReservationRequestsControllerTests =
     [<Fact>]
     let SutIsController() =
-        let sut = pool<ReservationsController> |> Seq.head
+        let sut = Pool<ReservationsController> |> Seq.head
         Assert.IsAssignableFrom<ApiController>(sut)
 
     [<Fact>]
     let PostReturnsCorrectResult() =
-        let sut = pool<ReservationsController> |> Seq.head
-        let rendition = pool<MakeReservationRendition> |> Seq.head
+        let sut = Pool<ReservationsController> |> Seq.head
+        let rendition = Pool<MakeReservationRendition> |> Seq.head
         
         let actual : HttpResponseMessage = sut.Post rendition
 

@@ -53,4 +53,4 @@ let private factory =
         EnumerableRelay(),
         TerminatingSpecimenBuilder())
 
-let pool<'T> = Generator<'T>(factory) :> 'T seq
+let Pool<'T> = Generator<'T>(factory) :> 'T seq
