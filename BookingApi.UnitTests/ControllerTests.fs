@@ -13,10 +13,8 @@ module HomeControllerTests =
     let SutIsController (sut : HomeController) =
         Assert.IsAssignableFrom<ApiController> sut
 
-    [<Fact>]
-    let GetReturnsCorrectResult() =
-        let sut = Pool<HomeController> |> Seq.head
-    
+    [<Theory; TestConventions>]
+    let GetReturnsCorrectResult (sut : HomeController) =    
         let actual : HttpResponseMessage = sut.Get()
     
         Assert.True(
