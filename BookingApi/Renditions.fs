@@ -2,8 +2,18 @@
 
 open System
 
-type MakeReservationRendition() =
-    [<DefaultValue>] val mutable Date : string
-    [<DefaultValue>] val mutable Name : string
-    [<DefaultValue>] val mutable Email : string
-    [<DefaultValue>] val mutable Quantity : int
+[<CLIMutable>]
+type MakeReservationRendition = {
+    Date : string
+    Name : string
+    Email : string
+    Quantity : int }
+
+[<CLIMutable>]
+type InventoryRecordRendition = {
+    Date : string
+    Seats : int }
+
+[<CLIMutable>]
+type InventoryRendition = {
+    Records : InventoryRecordRendition array }

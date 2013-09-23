@@ -1,5 +1,6 @@
 ﻿namespace Ploeh.Samples.Booking.HttpApi.UnitTests
 
+open System
 open System.Net
 open System.Net.Http
 open System.Web.Http
@@ -37,3 +38,24 @@ module InventoryControllerTests =
     [<Theory; TestConventions>]
     let SutIsController (sut : InventoryController) =
         Assert.IsAssignableFrom<ApiController> sut
+
+    let datesIn year =
+        DateTime(year, 1, 1)
+        |> Seq.unfold (fun d -> Some(d, d.AddDays 1.0))
+        |> Seq.takeWhile (fun d -> d.Year <= year)
+
+    [<Theory; TestConventions>]
+    let GetUnreservedYearReturnsCorrectResult(sut : InventoryController,
+                                              year : int) =
+        let response : HttpResponseMessage = sut.Get year
+        let actual = response.Content.ReadAsAsync<InventoryRendition>().Result
+
+        let expectedRecords =
+            datesIn year
+            |> Seq.map (fun d ->
+                {
+                    Date = d.ToString("o")
+                    Seats = sut.SeatingCapacity })
+            |> Seq.toArray
+        let expected = { Records = expectedRecords }
+        Assert.Equal(expected, actual)

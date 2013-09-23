@@ -1,5 +1,6 @@
 ﻿namespace Ploeh.Samples.Booking.HttpApi
 
+open System
 open System.Net
 open System.Net.Http
 open System.Web.Http
@@ -13,5 +14,24 @@ type ReservationsController() =
     member this.Post rendition =
         new HttpResponseMessage(HttpStatusCode.Accepted)
 
-type InventoryController() =
+type InventoryController(seatingCapacity : int) =
     inherit ApiController()
+    member this.Get year =
+        let datesIn year =
+            DateTime(year, 1, 1)
+            |> Seq.unfold (fun d -> Some(d, d.AddDays 1.0))
+            |> Seq.takeWhile (fun d -> d.Year <= year)
+
+        let inventoryRecords =
+            datesIn year
+            |> Seq.map (fun d -> 
+                {
+                    Date = d.ToString("o")
+                    Seats = seatingCapacity } )
+            |> Seq.toArray
+
+        this.Request.CreateResponse(
+            HttpStatusCode.OK,
+            { Records = inventoryRecords })
+
+    member this.SeatingCapacity = seatingCapacity
