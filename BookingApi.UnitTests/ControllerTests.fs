@@ -11,7 +11,7 @@ module HomeControllerTests =
     [<Fact>]
     let SutIsController() =
         let sut = Pool<HomeController> |> Seq.head
-        Assert.IsAssignableFrom<ApiController>(sut)
+        Assert.IsAssignableFrom<ApiController> sut
 
     [<Fact>]
     let GetReturnsCorrectResult() =
@@ -27,7 +27,7 @@ module ReservationRequestsControllerTests =
     [<Fact>]
     let SutIsController() =
         let sut = Pool<ReservationsController> |> Seq.head
-        Assert.IsAssignableFrom<ApiController>(sut)
+        Assert.IsAssignableFrom<ApiController> sut
 
     [<Fact>]
     let PostReturnsCorrectResult() =
