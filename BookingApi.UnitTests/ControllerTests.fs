@@ -6,11 +6,11 @@ open System.Web.Http
 open Ploeh.Samples.Booking.HttpApi
 open Ploeh.Samples.Booking.HttpApi.UnitTests.Infrastructure
 open Xunit
+open Xunit.Extensions
 
 module HomeControllerTests =
-    [<Fact>]
-    let SutIsController() =
-        let sut = Pool<HomeController> |> Seq.head
+    [<Theory; TestConventions>]
+    let SutIsController (sut : HomeController) =
         Assert.IsAssignableFrom<ApiController> sut
 
     [<Fact>]

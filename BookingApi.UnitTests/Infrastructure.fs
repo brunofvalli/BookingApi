@@ -2,7 +2,9 @@
 
 open System
 open Ploeh.AutoFixture
+open Ploeh.AutoFixture.AutoFoq
 open Ploeh.AutoFixture.Kernel
+open Ploeh.AutoFixture.Xunit
 
 let private random = Random()
 
@@ -54,3 +56,16 @@ let private factory =
         TerminatingSpecimenBuilder())
 
 let Pool<'T> = Generator<'T>(factory) :> 'T seq
+
+type TracingCustomization() =
+    interface ICustomization with
+        member this.Customize fixture =
+            fixture.Behaviors.Add(TracingBehavior())
+
+type TestConventions() =
+    inherit CompositeCustomization(
+        TracingCustomization(),
+        AutoFoqCustomization())
+
+type TestConventionsAttribute() =
+    inherit AutoDataAttribute(Fixture().Customize(TestConventions()))
