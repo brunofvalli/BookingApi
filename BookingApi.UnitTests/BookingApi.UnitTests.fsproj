@@ -44,7 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Foq">
-      <HintPath>..\packages\Foq.1.0\Lib\net45\Foq.dll</HintPath>
+      <HintPath>..\packages\Foq.1.1\Lib\net45\Foq.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="mscorlib" />
