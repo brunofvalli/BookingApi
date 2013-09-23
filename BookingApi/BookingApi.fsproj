@@ -8,7 +8,7 @@
     <ProjectGuid>3905a7ae-f4e6-484d-a0b0-1039e6dd4ba5</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>BookingApi</RootNamespace>
-    <AssemblyName>BookingApi</AssemblyName>
+    <AssemblyName>Ploeh.Samples.Booking.HttpApi</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <Name>BookingApi</Name>
   </PropertyGroup>
