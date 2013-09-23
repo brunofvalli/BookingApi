@@ -2,8 +2,8 @@
 
 open System
 
-type MakeReservationRendition = {
-    mutable Date : DateTimeOffset
-    mutable Name : string
-    mutable Email : string
-    mutable Quantity : int }
+type MakeReservationRendition() =
+    [<DefaultValue>] val mutable Date : DateTimeOffset
+    [<DefaultValue>] val mutable Name : string
+    [<DefaultValue>] val mutable Email : string
+    [<DefaultValue>] val mutable Quantity : int
