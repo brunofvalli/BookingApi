@@ -3,7 +3,7 @@
 open System
 
 type MakeReservationRendition() =
-    [<DefaultValue>] val mutable Date : DateTimeOffset
+    [<DefaultValue>] val mutable Date : string
     [<DefaultValue>] val mutable Name : string
     [<DefaultValue>] val mutable Email : string
     [<DefaultValue>] val mutable Quantity : int
