@@ -12,3 +12,6 @@ type ReservationsController() =
     inherit ApiController()
     member this.Post rendition =
         new HttpResponseMessage(HttpStatusCode.Accepted)
+
+type InventoryController() =
+    inherit ApiController()

@@ -37,3 +37,9 @@ module ReservationRequestsControllerTests =
         let actual : HttpResponseMessage = sut.Post rendition
 
         Assert.Equal(HttpStatusCode.Accepted, actual.StatusCode)
+
+module InventoryControllerTests =
+    [<Fact>]
+    let SutIsController() =
+        let sut = Pool<InventoryController> |> Seq.head
+        Assert.IsAssignableFrom<ApiController> sut
