@@ -26,17 +26,14 @@ module ReservationRequestsControllerTests =
     let SutIsController (sut : ReservationsController) =
         Assert.IsAssignableFrom<ApiController> sut
 
-    [<Fact>]
-    let PostReturnsCorrectResult() =
-        let sut = Pool<ReservationsController> |> Seq.head
-        let rendition = Pool<MakeReservationRendition> |> Seq.head
-        
+    [<Theory; TestConventions>]
+    let PostReturnsCorrectResult(sut : ReservationsController,
+                                 rendition : MakeReservationRendition) =
         let actual : HttpResponseMessage = sut.Post rendition
 
         Assert.Equal(HttpStatusCode.Accepted, actual.StatusCode)
 
 module InventoryControllerTests =
-    [<Fact>]
-    let SutIsController() =
-        let sut = Pool<InventoryController> |> Seq.head
+    [<Theory; TestConventions>]
+    let SutIsController (sut : InventoryController) =
         Assert.IsAssignableFrom<ApiController> sut
