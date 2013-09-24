@@ -1,4 +1,4 @@
-﻿module Ploeh.Samples.Booking.HttpApi.UnitTests.Infrastructure
+﻿module Ploeh.Samples.Booking.HttpApi.UnitTests.TestDsl
 
 open System
 open System.Net.Http
@@ -26,3 +26,11 @@ type TestConventions() =
 
 type TestConventionsAttribute() =
     inherit AutoDataAttribute(Fixture().Customize(TestConventions()))
+
+let private r = Random()
+
+let Shuffle source = source |> List.sortBy (fun _ -> r.Next())
+
+let SelectRandom count source = source |> Shuffle |> Seq.take count
+
+let PickRandom source = source |> SelectRandom 1 |> Seq.head

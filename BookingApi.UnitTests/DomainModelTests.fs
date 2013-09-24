@@ -1,7 +1,7 @@
 ﻿namespace Ploeh.Samples.Booking.HttpApi.UnitTests
 
 open System
-open Ploeh.Samples.Booking.HttpApi.UnitTests.Infrastructure
+open Ploeh.Samples.Booking.HttpApi.UnitTests.TestDsl
 open Xunit
 open Xunit.Extensions
 

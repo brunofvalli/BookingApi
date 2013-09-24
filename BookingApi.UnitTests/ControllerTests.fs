@@ -5,7 +5,7 @@ open System.Net
 open System.Net.Http
 open System.Web.Http
 open Ploeh.Samples.Booking.HttpApi
-open Ploeh.Samples.Booking.HttpApi.UnitTests.Infrastructure
+open Ploeh.Samples.Booking.HttpApi.UnitTests.TestDsl
 open Xunit
 open Xunit.Extensions
 
