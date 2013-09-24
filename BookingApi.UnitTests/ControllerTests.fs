@@ -72,3 +72,21 @@ module AvailabilityControllerTests =
             |> Seq.toArray
         let expected = { Openings = expectedOpenings }
         Assert.Equal(expected, actual)
+
+    [<Theory; TestConventions>]
+    let GetUnreservedDayReturnsCorrectResult(sut : AvailabilityController,
+                                             year : int) =
+        let month = [1 .. 12] |> PickRandom
+        let daysInMonth = System.Globalization.CultureInfo.CurrentCulture.Calendar.GetDaysInMonth(year, month)
+        let day = [1 .. daysInMonth] |> PickRandom
+
+        let response : HttpResponseMessage = sut.Get(year, month, day)
+        let actual = response.Content.ReadAsAsync<AvailabilityRendition>().Result
+
+        let expected = {
+            Openings =
+                [| {
+                    Date = DateTime(year, month, day).ToString("o")
+                    Seats = sut.SeatingCapacity }
+                |] }
+        Assert.Equal(expected, actual)

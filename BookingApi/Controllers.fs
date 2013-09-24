@@ -42,4 +42,12 @@ type AvailabilityController(seatingCapacity : int) =
             HttpStatusCode.OK,
             { Openings = openings })
 
+    member this.Get(year, month, day) =
+        let opening = {
+            Date = DateTime(year, month, day).ToString("o")
+            Seats = seatingCapacity }
+        this.Request.CreateResponse(
+            HttpStatusCode.OK,
+            { Openings = [| opening |] })
+
     member this.SeatingCapacity = seatingCapacity
