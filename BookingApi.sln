@@ -7,6 +7,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "BookingApi.UnitTests", "Boo
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "BookingApi", "BookingApi\BookingApi.fsproj", "{3905A7AE-F4E6-484D-A0B0-1039E6DD4BA5}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "BookingApi.BoundaryTests", "BookingApi.BoundaryTests\BookingApi.BoundaryTests.fsproj", "{2E81263F-F0EF-43C7-BA60-3C035CF4FE96}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{3905A7AE-F4E6-484D-A0B0-1039E6DD4BA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3905A7AE-F4E6-484D-A0B0-1039E6DD4BA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3905A7AE-F4E6-484D-A0B0-1039E6DD4BA5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E81263F-F0EF-43C7-BA60-3C035CF4FE96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E81263F-F0EF-43C7-BA60-3C035CF4FE96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E81263F-F0EF-43C7-BA60-3C035CF4FE96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E81263F-F0EF-43C7-BA60-3C035CF4FE96}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
