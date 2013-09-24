@@ -18,7 +18,7 @@ type AvailabilityController(seatingCapacity : int) =
     inherit ApiController()
     member this.Get year =
         let openings =
-            Availability.DatesInYear year
+            Dates.InYear year
             |> Seq.map (fun d -> 
                 {
                     Date = d.ToString("o")
@@ -31,7 +31,7 @@ type AvailabilityController(seatingCapacity : int) =
 
     member this.Get(year, month) =
         let openings =
-            Availability.DatesInMonth year month
+            Dates.InMonth year month
             |> Seq.map (fun d ->
                 {
                     Date = d.ToString("o")

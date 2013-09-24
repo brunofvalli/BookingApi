@@ -1,13 +1,12 @@
 ﻿namespace Ploeh.Samples.Booking.HttpApi.UnitTests
 
 open System
+open Ploeh.Samples.Booking.HttpApi
 open Ploeh.Samples.Booking.HttpApi.UnitTests.TestDsl
 open Xunit
 open Xunit.Extensions
 
 module AvailabilityTests =
-    open Ploeh.Samples.Booking.HttpApi.Availability
-
     [<Theory; TestConventions>]
     let DatesFromReturnsCorrectSequence (dates : DateTime seq) =
         let sortedDates =
@@ -15,7 +14,7 @@ module AvailabilityTests =
         let head = sortedDates |> List.head
         let last = sortedDates |> Seq.nth 1
 
-        let actual : DateTime seq = DatesFrom head
+        let actual : DateTime seq = Dates.InitInfinite head
 
         Assert.Equal(head, actual |> Seq.head)
         Assert.Equal(last.AddDays -1.0, actual
@@ -26,7 +25,7 @@ module AvailabilityTests =
 
     [<Theory; TestConventions>]
     let DatesInYearReturnsCorrectResult (year : int) =
-        let actual : DateTime seq = DatesInYear year
+        let actual : DateTime seq = Dates.InYear year
 
         let daysInYear = System.Globalization.CultureInfo.CurrentCulture.Calendar.GetDaysInYear year
         Assert.Equal(DateTime(year, 1, 1), actual |> Seq.head)
@@ -39,7 +38,7 @@ module AvailabilityTests =
     let DatesInMonthReturnsCorrectResult (year : int) =
         let month = [1 .. 12] |> PickRandom
 
-        let actual : DateTime seq = DatesInMonth year month
+        let actual : DateTime seq = Dates.InMonth year month
 
         let daysInMonth = System.Globalization.CultureInfo.CurrentCulture.Calendar.GetDaysInMonth(year, month)
         Assert.Equal(DateTime(year, month, 1), actual |> Seq.head)

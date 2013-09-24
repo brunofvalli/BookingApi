@@ -46,7 +46,7 @@ module AvailabilityControllerTests =
         let actual = response.Content.ReadAsAsync<AvailabilityRendition>().Result
 
         let expectedRecords =
-            Availability.DatesInYear year
+            Dates.InYear year
             |> Seq.map (fun d ->
                 {
                     Date = d.ToString("o")
@@ -64,7 +64,7 @@ module AvailabilityControllerTests =
         let actual = response.Content.ReadAsAsync<AvailabilityRendition>().Result
 
         let expectedOpenings =
-            Availability.DatesInMonth year month
+            Dates.InMonth year month
             |> Seq.map (fun d ->
                 {
                     Date = d.ToString("o")

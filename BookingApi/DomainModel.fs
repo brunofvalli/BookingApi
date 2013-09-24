@@ -2,16 +2,16 @@
 
 open System
 
-module Availability =
-    let DatesFrom (date : DateTime) =
+module Dates =
+    let InitInfinite (date : DateTime) =
         date |> Seq.unfold (fun d -> Some(d, d.AddDays 1.0))
 
-    let DatesInYear year =
+    let InYear year =
         DateTime(year, 1, 1)
-        |> DatesFrom
+        |> InitInfinite
         |> Seq.takeWhile (fun d -> d.Year = year)
 
-    let DatesInMonth year month =
+    let InMonth year month =
         DateTime(year, month, 1)
-        |> DatesFrom
+        |> InitInfinite
         |> Seq.takeWhile (fun d -> d.Month = month)
