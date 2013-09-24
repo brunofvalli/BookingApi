@@ -54,3 +54,21 @@ module AvailabilityControllerTests =
             |> Seq.toArray
         let expected = { Openings = expectedRecords }
         Assert.Equal(expected, actual)
+
+    [<Theory; TestConventions>]
+    let GetUnreservedMonthReturnsCorrectResult(sut : AvailabilityController,
+                                               year : int) =
+        let month = [1 .. 12] |> PickRandom
+
+        let response : HttpResponseMessage = sut.Get(year, month)
+        let actual = response.Content.ReadAsAsync<AvailabilityRendition>().Result
+
+        let expectedOpenings =
+            Availability.DatesInMonth year month
+            |> Seq.map (fun d ->
+                {
+                    Date = d.ToString("o")
+                    Seats = sut.SeatingCapacity })
+            |> Seq.toArray
+        let expected = { Openings = expectedOpenings }
+        Assert.Equal(expected, actual)
