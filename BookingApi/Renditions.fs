@@ -15,5 +15,5 @@ type OpeningsRendition = {
     Seats : int }
 
 [<CLIMutable>]
-type InventoryRendition = {
+type AvailabilityRendition = {
     Openings : OpeningsRendition array }

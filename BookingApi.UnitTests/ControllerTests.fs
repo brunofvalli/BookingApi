@@ -48,7 +48,7 @@ module InventoryControllerTests =
     let GetUnreservedYearReturnsCorrectResult(sut : InventoryController,
                                               year : int) =
         let response : HttpResponseMessage = sut.Get year
-        let actual = response.Content.ReadAsAsync<InventoryRendition>().Result
+        let actual = response.Content.ReadAsAsync<AvailabilityRendition>().Result
 
         let expectedRecords =
             datesIn year
