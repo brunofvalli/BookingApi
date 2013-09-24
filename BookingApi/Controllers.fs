@@ -11,7 +11,7 @@ type HomeController() =
 
 type ReservationsController() =
     inherit ApiController()
-    member this.Post rendition =
+    member this.Post (rendition : MakeReservationRendition) =
         new HttpResponseMessage(HttpStatusCode.Accepted)
 
 type AvailabilityController(seatingCapacity : int) =
