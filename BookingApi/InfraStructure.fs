@@ -11,3 +11,4 @@ let ConfigureRoutes (config : HttpConfiguration) =
         "{controller}/{id}",
         { Controller = "Home"; Id = RouteParameter.Optional }) |> ignore
 
+let Configure = ConfigureRoutes
