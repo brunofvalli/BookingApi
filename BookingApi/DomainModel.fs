@@ -11,3 +11,7 @@ module Availability =
         |> DatesFrom
         |> Seq.takeWhile (fun d -> d.Year = year)
 
+    let DatesInMonth year month =
+        DateTime(year, month, 1)
+        |> DatesFrom
+        |> Seq.takeWhile (fun d -> d.Month = month)

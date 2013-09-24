@@ -33,4 +33,17 @@ module AvailabilityTests =
         Assert.Equal(daysInYear, actual |> Seq.length)
         Assert.Equal(
             DateTime(year, 1, 1).AddDays (float daysInYear - 1.0),
-            actual |> Seq.toList |> List.rev |> List.head)       
+            actual |> Seq.toList |> List.rev |> List.head)
+
+    [<Theory; TestConventions>]
+    let DatesInMonthReturnsCorrectResult (year : int) =
+        let month = [1 .. 12] |> PickRandom
+
+        let actual : DateTime seq = DatesInMonth year month
+
+        let daysInMonth = System.Globalization.CultureInfo.CurrentCulture.Calendar.GetDaysInMonth(year, month)
+        Assert.Equal(DateTime(year, month, 1), actual |> Seq.head)
+        Assert.Equal(daysInMonth, actual |> Seq.length)
+        Assert.Equal(
+            DateTime(year, month, 1).AddDays (float daysInMonth - 1.0),
+            actual |> Seq.toList |> List.rev |> List.head)
