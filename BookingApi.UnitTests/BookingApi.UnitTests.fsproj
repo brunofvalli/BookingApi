@@ -38,6 +38,7 @@
   <ItemGroup>
     <None Include="packages.config" />
     <Compile Include="Infrastructure.fs" />
+    <Compile Include="DomainModelTests.fs" />
     <Compile Include="ControllerTests.fs" />
     <None Include="app.config" />
     <None Include="Foq.Usage.fsx" />
