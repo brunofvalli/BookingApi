@@ -60,11 +60,6 @@ let private factory =
 
 let Pool<'T> = Generator<'T>(factory) :> 'T seq
 
-type TracingCustomization() =
-    interface ICustomization with
-        member this.Customize fixture =
-            fixture.Behaviors.Add(TracingBehavior())
-
 type WebApiCustomization() =
     interface ICustomization with
         member this.Customize fixture =
@@ -77,7 +72,6 @@ type WebApiCustomization() =
 
 type TestConventions() =
     inherit CompositeCustomization(
-        TracingCustomization(),
         WebApiCustomization(),
         AutoFoqCustomization())
 
