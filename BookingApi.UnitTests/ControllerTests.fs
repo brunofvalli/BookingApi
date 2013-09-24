@@ -39,11 +39,6 @@ module InventoryControllerTests =
     let SutIsController (sut : InventoryController) =
         Assert.IsAssignableFrom<ApiController> sut
 
-    let datesIn year =
-        DateTime(year, 1, 1)
-        |> Seq.unfold (fun d -> Some(d, d.AddDays 1.0))
-        |> Seq.takeWhile (fun d -> d.Year <= year)
-
     [<Theory; TestConventions>]
     let GetUnreservedYearReturnsCorrectResult(sut : InventoryController,
                                               year : int) =
@@ -51,7 +46,7 @@ module InventoryControllerTests =
         let actual = response.Content.ReadAsAsync<AvailabilityRendition>().Result
 
         let expectedRecords =
-            datesIn year
+            Availability.DatesInYear year
             |> Seq.map (fun d ->
                 {
                     Date = d.ToString("o")

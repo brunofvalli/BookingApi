@@ -17,13 +17,8 @@ type ReservationsController() =
 type InventoryController(seatingCapacity : int) =
     inherit ApiController()
     member this.Get year =
-        let datesIn year =
-            DateTime(year, 1, 1)
-            |> Seq.unfold (fun d -> Some(d, d.AddDays 1.0))
-            |> Seq.takeWhile (fun d -> d.Year <= year)
-
         let openings =
-            datesIn year
+            Availability.DatesInYear year
             |> Seq.map (fun d -> 
                 {
                     Date = d.ToString("o")
