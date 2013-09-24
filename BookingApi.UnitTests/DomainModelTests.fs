@@ -23,3 +23,14 @@ module AvailabilityTests =
                                         |> Seq.toList
                                         |> List.rev
                                         |> List.head)
+
+    [<Theory; TestConventions>]
+    let DatesInYearReturnsCorrectResult (year : int) =
+        let actual : DateTime seq = DatesInYear year
+
+        let daysInYear = System.Globalization.CultureInfo.CurrentCulture.Calendar.GetDaysInYear year
+        Assert.Equal(DateTime(year, 1, 1), actual |> Seq.head)
+        Assert.Equal(daysInYear, actual |> Seq.length)
+        Assert.Equal(
+            DateTime(year, 1, 1).AddDays (float daysInYear - 1.0),
+            actual |> Seq.toList |> List.rev |> List.head)       
