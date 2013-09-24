@@ -14,7 +14,7 @@ type ReservationsController() =
     member this.Post rendition =
         new HttpResponseMessage(HttpStatusCode.Accepted)
 
-type InventoryController(seatingCapacity : int) =
+type AvailabilityController(seatingCapacity : int) =
     inherit ApiController()
     member this.Get year =
         let openings =

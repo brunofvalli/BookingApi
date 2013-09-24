@@ -34,13 +34,13 @@ module ReservationRequestsControllerTests =
 
         Assert.Equal(HttpStatusCode.Accepted, actual.StatusCode)
 
-module InventoryControllerTests =
+module AvailabilityControllerTests =
     [<Theory; TestConventions>]
-    let SutIsController (sut : InventoryController) =
+    let SutIsController (sut : AvailabilityController) =
         Assert.IsAssignableFrom<ApiController> sut
 
     [<Theory; TestConventions>]
-    let GetUnreservedYearReturnsCorrectResult(sut : InventoryController,
+    let GetUnreservedYearReturnsCorrectResult(sut : AvailabilityController,
                                               year : int) =
         let response : HttpResponseMessage = sut.Get year
         let actual = response.Content.ReadAsAsync<AvailabilityRendition>().Result
