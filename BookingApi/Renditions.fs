@@ -10,10 +10,10 @@ type MakeReservationRendition = {
     Quantity : int }
 
 [<CLIMutable>]
-type InventoryRecordRendition = {
+type OpeningsRendition = {
     Date : string
     Seats : int }
 
 [<CLIMutable>]
 type InventoryRendition = {
-    Records : InventoryRecordRendition array }
+    Openings : OpeningsRendition array }

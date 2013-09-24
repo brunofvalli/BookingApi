@@ -57,5 +57,5 @@ module InventoryControllerTests =
                     Date = d.ToString("o")
                     Seats = sut.SeatingCapacity })
             |> Seq.toArray
-        let expected = { Records = expectedRecords }
+        let expected = { Openings = expectedRecords }
         Assert.Equal(expected, actual)

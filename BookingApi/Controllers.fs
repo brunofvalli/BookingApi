@@ -22,7 +22,7 @@ type InventoryController(seatingCapacity : int) =
             |> Seq.unfold (fun d -> Some(d, d.AddDays 1.0))
             |> Seq.takeWhile (fun d -> d.Year <= year)
 
-        let inventoryRecords =
+        let openings =
             datesIn year
             |> Seq.map (fun d -> 
                 {
@@ -32,6 +32,6 @@ type InventoryController(seatingCapacity : int) =
 
         this.Request.CreateResponse(
             HttpStatusCode.OK,
-            { Records = inventoryRecords })
+            { Openings = openings })
 
     member this.SeatingCapacity = seatingCapacity
