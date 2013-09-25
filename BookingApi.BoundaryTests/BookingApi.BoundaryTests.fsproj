@@ -41,6 +41,7 @@
     <Compile Include="BoundaryTestInfrastructure.fs" />
     <Compile Include="HomeJsonTests.fs" />
     <Compile Include="ReservationRequestsJsonTests.fs" />
+    <Compile Include="AvailabilityJsonTests.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="ImpromptuInterface">
