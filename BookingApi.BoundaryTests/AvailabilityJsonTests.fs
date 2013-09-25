@@ -32,3 +32,18 @@ let GetMonthReturnsCorrectResponse(client : HttpClient,
         response.IsSuccessStatusCode,
         sprintf "Actual status code: %O" response.StatusCode)
     Assert.Equal(expectedDays, json?openings |> Seq.length)
+
+[<Theory; BoundaryTestConventions>]
+let GetDayReturnsCorrectResponse(client : HttpClient,
+                                 year : int) =
+    let month = [1 .. 12] |> PickRandom
+    let daysInMonth = CultureInfo.CurrentCulture.Calendar.GetDaysInMonth(year, month)
+    let day = [1 .. daysInMonth] |> PickRandom
+
+    let response = client.GetAsync(sprintf "availability/%i/%i/%i" year month day).Result
+    let json = response.Content.ReadAsJsonAsync().Result
+    
+    Assert.True(
+        response.IsSuccessStatusCode,
+        sprintf "Actual status code: %O" response.StatusCode)
+    Assert.Equal(1, json?openings |> Seq.length)
