@@ -40,8 +40,9 @@ module AvailabilityControllerTests =
         Assert.IsAssignableFrom<ApiController> sut
 
     [<Theory; TestConventions>]
-    let GetUnreservedYearReturnsCorrectResult(sut : AvailabilityController,
-                                              year : int) =
+    let GetUnreservedFutureYearReturnsCorrectResult(sut : AvailabilityController,
+                                                    yearsInFuture : int) =
+        let year = DateTime.Now.Year + yearsInFuture
         let response : HttpResponseMessage = sut.Get year
         let actual = response.Content.ReadAsAsync<AvailabilityRendition>().Result
 
@@ -56,8 +57,9 @@ module AvailabilityControllerTests =
         Assert.Equal(expected, actual)
 
     [<Theory; TestConventions>]
-    let GetUnreservedMonthReturnsCorrectResult(sut : AvailabilityController,
-                                               year : int) =
+    let GetUnreservedFutureMonthReturnsCorrectResult(sut : AvailabilityController,
+                                                     yearsInFuture : int) =
+        let year = DateTime.Now.Year + yearsInFuture
         let month = [1 .. 12] |> PickRandom
 
         let response : HttpResponseMessage = sut.Get(year, month)
@@ -74,8 +76,9 @@ module AvailabilityControllerTests =
         Assert.Equal(expected, actual)
 
     [<Theory; TestConventions>]
-    let GetUnreservedDayReturnsCorrectResult(sut : AvailabilityController,
-                                             year : int) =
+    let GetUnreservedFutureDayReturnsCorrectResult(sut : AvailabilityController,
+                                                   yearsInFuture : int) =
+        let year = DateTime.Now.Year + yearsInFuture
         let month = [1 .. 12] |> PickRandom
         let daysInMonth = System.Globalization.CultureInfo.CurrentCulture.Calendar.GetDaysInMonth(year, month)
         let day = [1 .. daysInMonth] |> PickRandom
