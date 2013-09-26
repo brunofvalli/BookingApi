@@ -22,7 +22,7 @@ type AvailabilityController(seatingCapacity : int) =
             Dates.InYear year
             |> Seq.map (fun d -> 
                 {
-                    Date = d.ToString("o")
+                    Date = d.ToString "yyyy.MM.dd"
                     Seats = if d < now.Date then 0 else seatingCapacity } )
             |> Seq.toArray
 
@@ -36,7 +36,7 @@ type AvailabilityController(seatingCapacity : int) =
             Dates.InMonth year month
             |> Seq.map (fun d ->
                 {
-                    Date = d.ToString("o")
+                    Date = d.ToString "yyyy.MM.dd"
                     Seats = if d < now.Date then 0 else seatingCapacity } )
             |> Seq.toArray
 
@@ -48,7 +48,7 @@ type AvailabilityController(seatingCapacity : int) =
         let now = DateTimeOffset.Now
         let requestedDate = DateTimeOffset(DateTime(year, month, day), now.Offset)
         let opening = {
-            Date = DateTime(year, month, day).ToString("o")
+            Date = DateTime(year, month, day).ToString "yyyy.MM.dd"
             Seats = if requestedDate.Date < now.Date then 0 else seatingCapacity }
         this.Request.CreateResponse(
             HttpStatusCode.OK,

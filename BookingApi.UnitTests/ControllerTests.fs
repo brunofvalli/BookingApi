@@ -51,7 +51,7 @@ module AvailabilityControllerTests =
             Dates.InYear year
             |> Seq.map (fun d ->
                 {
-                    Date = d.ToString("o")
+                    Date = d.ToString "yyyy.MM.dd"
                     Seats = sut.SeatingCapacity })
             |> Seq.toArray
         let expected = { Openings = expectedRecords }
@@ -69,7 +69,7 @@ module AvailabilityControllerTests =
             Dates.InYear year
             |> Seq.map (fun d ->
                 {
-                    Date = d.ToString "o"
+                    Date = d.ToString "yyyy.MM.dd"
                     Seats = 0 })
             |> Seq.toArray
         let expected = { Openings = expectedOpenings }
@@ -87,7 +87,7 @@ module AvailabilityControllerTests =
             Dates.InYear year
             |> Seq.map (fun d ->
                 {
-                    Date = d.ToString "o"
+                    Date = d.ToString "yyyy.MM.dd"
                     Seats = if d < now.Date then 0 else sut.SeatingCapacity })
             |> Seq.toArray
         let expected = { Openings = expectedOpenings }
@@ -106,7 +106,7 @@ module AvailabilityControllerTests =
             Dates.InMonth year month
             |> Seq.map (fun d ->
                 {
-                    Date = d.ToString("o")
+                    Date = d.ToString "yyyy.MM.dd"
                     Seats = sut.SeatingCapacity })
             |> Seq.toArray
         let expected = { Openings = expectedOpenings }
@@ -125,7 +125,7 @@ module AvailabilityControllerTests =
             Dates.InMonth year month
             |> Seq.map (fun d ->
                 {
-                    Date = d.ToString "o"
+                    Date = d.ToString "yyyy.MM.dd"
                     Seats = 0 })
             |> Seq.toArray
         let expected = { Openings = expectedOpenings }
@@ -143,7 +143,7 @@ module AvailabilityControllerTests =
             Dates.InMonth year month
             |> Seq.map (fun d ->
                 {
-                    Date = d.ToString "o"
+                    Date = d.ToString "yyyy.MM.dd"
                     Seats = if d < now.Date then 0 else sut.SeatingCapacity })
             |> Seq.toArray
         let expected = { Openings = expectedOpenings }
@@ -163,7 +163,7 @@ module AvailabilityControllerTests =
         let expected = {
             Openings =
                 [| {
-                    Date = DateTime(year, month, day).ToString("o")
+                    Date = DateTime(year, month, day).ToString "yyyy.MM.dd"
                     Seats = sut.SeatingCapacity }
                 |] }
         Assert.Equal(expected, actual)
@@ -182,7 +182,7 @@ module AvailabilityControllerTests =
         let expected = {
             Openings =
                 [| {
-                    Date = DateTime(year, month, day).ToString("o")
+                    Date = DateTime(year, month, day).ToString "yyyy.MM.dd"
                     Seats = 0 }
                 |] }
         Assert.Equal(expected, actual)
@@ -198,7 +198,7 @@ module AvailabilityControllerTests =
         let expected = {
             Openings =
                 [| {
-                    Date = DateTime(year, month, day).ToString("o")
+                    Date = DateTime(year, month, day).ToString "yyyy.MM.dd"
                     Seats = sut.SeatingCapacity }
                 |] }
         Assert.Equal(expected, actual)
@@ -214,7 +214,7 @@ module AvailabilityControllerTests =
         let expected = {
             Openings =
                 [| {
-                    Date = DateTime(year, month, day).ToString("o")
+                    Date = DateTime(year, month, day).ToString "yyyy.MM.dd"
                     Seats = 0 }
                 |] }
         Assert.Equal(expected, actual)
