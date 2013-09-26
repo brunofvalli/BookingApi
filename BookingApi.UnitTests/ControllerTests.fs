@@ -110,8 +110,45 @@ module AvailabilityControllerTests =
                     Seats = sut.SeatingCapacity })
             |> Seq.toArray
         let expected = { Openings = expectedOpenings }
+        Assert.Equal(expected, actual)    
+    
+    [<Theory; TestConventions>]
+    let GetPastMonthReturnsCorrectResult(sut : AvailabilityController,
+                                         yearsInPast : int) =
+        let year = DateTime.Now.Year - yearsInPast
+        let month = [1 .. 12] |> PickRandom
+
+        let response = sut.Get(year, month)
+        let actual = response.Content.ReadAsAsync<AvailabilityRendition>().Result
+
+        let expectedOpenings =
+            Dates.InMonth year month
+            |> Seq.map (fun d ->
+                {
+                    Date = d.ToString "o"
+                    Seats = 0 })
+            |> Seq.toArray
+        let expected = { Openings = expectedOpenings }
         Assert.Equal(expected, actual)
 
+    [<Theory; TestConventions>]
+    let GetCurrentUnreservedMonthReturnsCorrectResult(sut : AvailabilityController) =
+        let now = DateTimeOffset.Now
+        let (year, month) = (now.Year, now.Month)
+
+        let response = sut.Get(year, month)
+        let actual = response.Content.ReadAsAsync<AvailabilityRendition>().Result
+
+        let expectedOpenings =
+            Dates.InMonth year month
+            |> Seq.map (fun d ->
+                {
+                    Date = d.ToString "o"
+                    Seats = if d < now.Date then 0 else sut.SeatingCapacity })
+            |> Seq.toArray
+        let expected = { Openings = expectedOpenings }
+        Assert.Equal(expected, actual)
+    
     [<Theory; TestConventions>]
     let GetUnreservedFutureDayReturnsCorrectResult(sut : AvailabilityController,
                                                    yearsInFuture : int) =

@@ -31,12 +31,13 @@ type AvailabilityController(seatingCapacity : int) =
             { Openings = openings })
 
     member this.Get(year, month) =
+        let now = DateTimeOffset.Now
         let openings =
             Dates.InMonth year month
             |> Seq.map (fun d ->
                 {
                     Date = d.ToString("o")
-                    Seats = seatingCapacity } )
+                    Seats = if d < now.Date then 0 else seatingCapacity } )
             |> Seq.toArray
 
         this.Request.CreateResponse(
