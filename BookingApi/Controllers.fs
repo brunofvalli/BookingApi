@@ -17,12 +17,13 @@ type ReservationsController() =
 type AvailabilityController(seatingCapacity : int) =
     inherit ApiController()
     member this.Get year =
+        let now = DateTimeOffset.Now
         let openings =
             Dates.InYear year
             |> Seq.map (fun d -> 
                 {
                     Date = d.ToString("o")
-                    Seats = seatingCapacity } )
+                    Seats = if d < now.Date then 0 else seatingCapacity } )
             |> Seq.toArray
 
         this.Request.CreateResponse(
