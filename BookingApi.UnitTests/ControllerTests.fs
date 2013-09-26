@@ -167,3 +167,54 @@ module AvailabilityControllerTests =
                     Seats = sut.SeatingCapacity }
                 |] }
         Assert.Equal(expected, actual)
+
+    [<Theory; TestConventions>]
+    let GetPastDayReturnsCorrectResult(sut : AvailabilityController,
+                                       yearsInPast : int) =
+        let year = DateTime.Now.Year - yearsInPast
+        let month = [1 .. 12] |> PickRandom
+        let daysInMonth = System.Globalization.CultureInfo.CurrentCulture.Calendar.GetDaysInMonth(year, month)
+        let day = [1 .. daysInMonth] |> PickRandom
+
+        let response = sut.Get(year, month, day)
+        let actual = response.Content.ReadAsAsync<AvailabilityRendition>().Result
+
+        let expected = {
+            Openings =
+                [| {
+                    Date = DateTime(year, month, day).ToString("o")
+                    Seats = 0 }
+                |] }
+        Assert.Equal(expected, actual)
+
+    [<Theory; TestConventions>]
+    let GetCurrentUnreservedDayReturnsCorrectResult(sut : AvailabilityController) =
+        let now = DateTimeOffset.Now
+        let (year, month, day) = (now.Year, now.Month, now.Day)
+
+        let response = sut.Get(year, month, day)
+        let actual = response.Content.ReadAsAsync<AvailabilityRendition>().Result
+
+        let expected = {
+            Openings =
+                [| {
+                    Date = DateTime(year, month, day).ToString("o")
+                    Seats = sut.SeatingCapacity }
+                |] }
+        Assert.Equal(expected, actual)
+
+    [<Theory; TestConventions>]
+    let GetYesterdayReturnsCorrectResult(sut : AvailabilityController) =
+        let yesterday = DateTimeOffset.Now.Subtract(TimeSpan.FromDays 1.0)
+        let (year, month, day) = (yesterday.Year, yesterday.Month, yesterday.Day)
+
+        let response = sut.Get(year, month, day)
+        let actual = response.Content.ReadAsAsync<AvailabilityRendition>().Result
+
+        let expected = {
+            Openings =
+                [| {
+                    Date = DateTime(year, month, day).ToString("o")
+                    Seats = 0 }
+                |] }
+        Assert.Equal(expected, actual)

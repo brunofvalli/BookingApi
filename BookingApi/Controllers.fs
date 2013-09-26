@@ -45,9 +45,11 @@ type AvailabilityController(seatingCapacity : int) =
             { Openings = openings })
 
     member this.Get(year, month, day) =
+        let now = DateTimeOffset.Now
+        let requestedDate = DateTimeOffset(DateTime(year, month, day), now.Offset)
         let opening = {
             Date = DateTime(year, month, day).ToString("o")
-            Seats = seatingCapacity }
+            Seats = if requestedDate.Date < now.Date then 0 else seatingCapacity }
         this.Request.CreateResponse(
             HttpStatusCode.OK,
             { Openings = [| opening |] })
