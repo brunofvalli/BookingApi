@@ -4,6 +4,7 @@ open System
 open System.Net
 open System.Net.Http
 open System.Web.Http
+open System.Reactive.Subjects
 
 type HomeController() =
     inherit ApiController()
@@ -11,8 +12,16 @@ type HomeController() =
 
 type ReservationsController() =
     inherit ApiController()
+    let subject = new Subject<MakeReservationCommand>()
     member this.Post (rendition : MakeReservationRendition) =
+        subject.OnNext {
+            Date = DateTime.Parse rendition.Date
+            Name = rendition.Name
+            Email = rendition.Email
+            Quantity = rendition.Quantity }
         new HttpResponseMessage(HttpStatusCode.Accepted)
+    interface IObservable<MakeReservationCommand> with
+        member this.Subscribe observer = subject.Subscribe observer
 
 type AvailabilityController(seatingCapacity : int) =
     inherit ApiController()

@@ -4,6 +4,7 @@ open System
 open System.Net.Http
 open System.Web.Http
 open System.Web.Http.Hosting
+open System.Reflection
 open Ploeh.AutoFixture
 open Ploeh.AutoFixture.AutoFoq
 open Ploeh.AutoFixture.Kernel
@@ -19,8 +20,26 @@ type WebApiCustomization() =
                         new HttpConfiguration()))
                 :> ISpecimenBuilder)
 
+type DateStringCustomization() =
+    interface ICustomization with
+        member this.Customize fixture =
+            fixture.Customizations.Add {
+                new ISpecimenBuilder with
+                    member this.Create(request, context) =
+                        match request with
+                        | :? ParameterInfo as pi
+                            when pi.ParameterType = typeof<string>
+                            && pi.Name.EndsWith("date", StringComparison.OrdinalIgnoreCase) ->
+                            (context.Resolve typeof<DateTime>).ToString() :> obj
+                        | :? PropertyInfo as prop
+                            when prop.PropertyType = typeof<string>
+                            && prop.Name.EndsWith("date", StringComparison.OrdinalIgnoreCase) ->
+                            (context.Resolve typeof<DateTime>).ToString() :> obj
+                        | _ -> NoSpecimen(request) :> obj }
+
 type TestConventions() =
     inherit CompositeCustomization(
+        DateStringCustomization(),
         WebApiCustomization(),
         AutoFoqCustomization())
 

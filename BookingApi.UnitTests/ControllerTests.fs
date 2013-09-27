@@ -34,6 +34,25 @@ module ReservationRequestsControllerTests =
 
         Assert.Equal(HttpStatusCode.Accepted, actual.StatusCode)
 
+    [<Theory; TestConventions>]
+    let SutIsObservable (sut : ReservationsController) =
+        Assert.IsAssignableFrom<IObservable<MakeReservationCommand>> sut
+
+    [<Theory; TestConventions>]
+    let PostPublishesCorrectCommand(sut : ReservationsController,
+                                    rendition : MakeReservationRendition) =        
+        let verified = ref false
+        let expected = {
+            MakeReservationCommand.Date = DateTime.Parse(rendition.Date)
+            Name = rendition.Name
+            Email = rendition.Email
+            Quantity = rendition.Quantity }
+        use sub = sut.Subscribe (fun cmd -> verified := expected = cmd)
+
+        sut.Post rendition |> ignore
+
+        Assert.True(!verified, "Command should be published")
+
 module AvailabilityControllerTests =
     [<Theory; TestConventions>]
     let SutIsController (sut : AvailabilityController) =
