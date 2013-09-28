@@ -38,6 +38,7 @@
   <ItemGroup>
     <None Include="packages.config" />
     <Compile Include="TestDsl.fs" />
+    <Compile Include="MessagesTests.fs" />
     <Compile Include="DomainModelTests.fs" />
     <Compile Include="ControllerTests.fs" />
     <None Include="app.config" />
