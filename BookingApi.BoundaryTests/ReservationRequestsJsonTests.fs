@@ -21,7 +21,7 @@ let PostReservationRequestReturnsCorrectStatusCode(client : HttpClient,
                                                    quantity : int) =
     let json =
         ReservationRequestJson(
-            date = date.ToString "o",
+            date = date.ToString "yyyy.MM.dd",
             name = name,
             email = email,
             quantity = quantity);

@@ -30,11 +30,11 @@ type DateStringCustomization() =
                         | :? ParameterInfo as pi
                             when pi.ParameterType = typeof<string>
                             && pi.Name.EndsWith("date", StringComparison.OrdinalIgnoreCase) ->
-                            (context.Resolve typeof<DateTime>).ToString() :> obj
+                            (context.Resolve typeof<DateTime> :?> DateTime).ToString "yyyy.MM.dd" :> obj
                         | :? PropertyInfo as prop
                             when prop.PropertyType = typeof<string>
                             && prop.Name.EndsWith("date", StringComparison.OrdinalIgnoreCase) ->
-                            (context.Resolve typeof<DateTime>).ToString() :> obj
+                            (context.Resolve typeof<DateTime> :?> DateTime).ToString "yyyy.MM.dd" :> obj
                         | _ -> NoSpecimen(request) :> obj }
 
 type TestConventions() =
