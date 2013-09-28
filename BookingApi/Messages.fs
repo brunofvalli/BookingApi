@@ -21,3 +21,6 @@ module Envelope =
         Id = id
         Created = created
         Item = item }
+
+    let EnvelopWithDefaults item =
+        Envelop (Guid.NewGuid()) (DateTimeOffset.Now) item
