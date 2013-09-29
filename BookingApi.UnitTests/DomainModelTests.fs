@@ -6,7 +6,7 @@ open Ploeh.Samples.Booking.HttpApi.UnitTests.TestDsl
 open Xunit
 open Xunit.Extensions
 
-module AvailabilityTests =
+module DatesTests =
     [<Theory; TestConventions>]
     let DatesFromReturnsCorrectSequence (dates : DateTime seq) =
         let sortedDates =
