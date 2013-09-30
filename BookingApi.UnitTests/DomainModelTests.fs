@@ -1,10 +1,11 @@
 ﻿namespace Ploeh.Samples.Booking.HttpApi.UnitTests
 
 open System
-open Ploeh.Samples.Booking.HttpApi
-open Ploeh.Samples.Booking.HttpApi.UnitTests.TestDsl
 open Xunit
 open Xunit.Extensions
+open Ploeh.Samples.Booking.HttpApi
+open Ploeh.Samples.Booking.HttpApi.UnitTests.TestDsl
+open Ploeh.AutoFixture
 
 module DatesTests =
     [<Theory; TestConventions>]
@@ -46,3 +47,53 @@ module DatesTests =
         Assert.Equal(
             DateTime(year, month, 1).AddDays (float daysInMonth - 1.0),
             actual |> Seq.toList |> List.rev |> List.head)
+
+module ReserverationsTests =
+    open Reserverations
+
+    [<Theory; TestConventions>]
+    let ReservationsInMemoryAreReservations (sut : InMemory) =
+        Assert.IsAssignableFrom<IReservations>(sut)
+    
+    [<Theory; TestConventions>]
+    let ToReservationsReturnsCorrectResult (expected : Envelope<Reservation> seq) =
+        let actual : InMemory = expected |> ToReservations
+        Assert.Equal<Envelope<Reservation>>(expected, actual)
+
+    [<Theory; TestConventions>]
+    let InMemoryBetweenReturnsCorrectResult (generator : Generator<Envelope<Reservation>>) =
+        let reservations =
+            generator |> Seq.take 10 |> Seq.sortBy (fun r -> r.Item.Date) |> Seq.toArray
+        let min = reservations.[2]
+        let max = reservations.[7]
+        let expected = reservations |> Seq.skip 2 |> Seq.take 6
+        let sut = reservations |> ToReservations
+
+        let actual = (sut :> IReservations).Between min.Item.Date max.Item.Date
+
+        Assert.Equal<Envelope<Reservation>>(expected, actual)
+
+    [<Theory; TestConventions>]
+    let BetweenReturnsCorrectResult (generator : Generator<Envelope<Reservation>>) =
+        let reservations =
+            generator |> Seq.take 10 |> Seq.sortBy (fun r -> r.Item.Date) |> Seq.toArray
+        let min = reservations.[2]
+        let max = reservations.[7]
+        let sut = reservations |> ToReservations
+
+        let actual = sut |> Between min.Item.Date max.Item.Date
+
+        let expected = (sut :> IReservations).Between min.Item.Date max.Item.Date
+        Assert.Equal<Envelope<Reservation>>(expected, actual)
+
+    [<Theory; TestConventions>]
+    let OnReturnsCorrectResult (reservations : Envelope<Reservation> array) =
+        let date = reservations |> Array.toList |> PickRandom
+        let sut = reservations |> ToReservations
+
+        let actual : Envelope<Reservation> seq = sut |> On date.Item
+
+        let expected =
+            sut
+            |> Between date.Item.Date.Date ((date.Item.Date.Date.AddDays 1.0) - TimeSpan.FromTicks 1L)
+        Assert.Equal<Envelope<Reservation>>(expected, actual)
