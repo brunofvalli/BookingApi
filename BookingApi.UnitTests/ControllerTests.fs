@@ -209,6 +209,47 @@ module AvailabilityControllerTests =
             |> Seq.toArray
         let expected = { Openings = expectedOpenings }
         Assert.Equal(expected, actual)
+
+    [<Theory; TestConventions>]
+    let GetMonthWithReservationsReturnsCorrectResult(fixture : IFixture,
+                                                     mutableReservations : System.Collections.Generic.List<Envelope<Reservation>>,
+                                                     yearsInFuture : int) =
+        // Fixture setup
+        let reservations = mutableReservations |> Reservations.ToReservations
+        fixture.Inject<Reservations.IReservations> reservations
+        let sut =
+            fixture.Generate<AvailabilityController>()
+            |> Seq.filter (fun c -> c.SeatingCapacity > 1)
+            |> Seq.head
+        
+        let year = DateTime.Now.Year + yearsInFuture
+        let month = [1 .. 12] |> PickRandom
+        let daysInMonth = System.Globalization.CultureInfo.CurrentCulture.Calendar.GetDaysInMonth(year, month)
+        let day = [1 .. daysInMonth] |> PickRandom
+        let reservationInMonth =
+            { fixture.Create<Reservation>() with
+                Date = DateTime(year, month, day)
+                Quantity = sut.SeatingCapacity - 1 }
+            |> EnvelopWithDefaults
+        mutableReservations.Add reservationInMonth
+
+        // Exercise SUT
+        let response = sut.Get(year, month)
+        let actual = response.Content.ReadAsAsync<AvailabilityRendition>().Result        
+        
+        // Verify outcome
+        let expectedOpenings =
+            Dates.In(Month(year, month))
+            |> Seq.map (fun d ->
+                {
+                    Date = d.ToString "yyyy.MM.dd"
+                    Seats =
+                        if d = reservationInMonth.Item.Date
+                        then sut.SeatingCapacity - reservationInMonth.Item.Quantity
+                        else sut.SeatingCapacity })
+            |> Seq.toArray
+        let expected = { Openings = expectedOpenings }
+        Assert.Equal(expected, actual)
     
     [<Theory; TestConventions>]
     let GetUnreservedFutureDayReturnsCorrectResult(sut : AvailabilityController,

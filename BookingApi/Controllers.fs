@@ -56,13 +56,22 @@ type AvailabilityController(reservations : Reservations.IReservations,
             { Openings = openings })
 
     member this.Get(year, month) =
+        let (min, max) = Dates.BoundariesIn(Year(year))
+        let map =
+            reservations
+            |> Reservations.Between min max
+            |> Seq.groupBy (fun r -> r.Item.Date)
+            |> Seq.map (fun (d, rs) ->
+                (d, rs |> Seq.map (fun r -> r.Item.Quantity) |> Seq.sum))
+            |> Map.ofSeq
+
         let now = DateTimeOffset.Now
         let openings =
             Dates.In(Month(year, month))
             |> Seq.map (fun d ->
                 {
                     Date = d.ToString "yyyy.MM.dd"
-                    Seats = if d < now.Date then 0 else seatingCapacity } )
+                    Seats = if d < now.Date then 0 else getAvailableSeats map d } )
             |> Seq.toArray
 
         this.Request.CreateResponse(
