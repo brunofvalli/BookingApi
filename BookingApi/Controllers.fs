@@ -40,10 +40,14 @@ type AvailabilityController(reservations : Reservations.IReservations,
             (d, rs |> Seq.map (fun r -> r.Item.Quantity) |> Seq.sum))
         |> Map.ofSeq
 
+    let toAvailability boundaries reservations =
+        let map = reservations |> toReservationMap boundaries
+        getAvailableSeats map
+
     member this.Get year =
-        let map =
+        let getAvailable =
             reservations
-            |> toReservationMap (Dates.BoundariesIn(Year(year)))
+            |> toAvailability (Dates.BoundariesIn(Year(year)))
 
         let now = DateTimeOffset.Now
         let openings =
@@ -51,7 +55,7 @@ type AvailabilityController(reservations : Reservations.IReservations,
             |> Seq.map (fun d -> 
                 {
                     Date = d.ToString "yyyy.MM.dd"
-                    Seats = if d < now.Date then 0 else getAvailableSeats map d } )
+                    Seats = if d < now.Date then 0 else getAvailable d } )
             |> Seq.toArray
 
         this.Request.CreateResponse(
@@ -59,9 +63,9 @@ type AvailabilityController(reservations : Reservations.IReservations,
             { Openings = openings })
 
     member this.Get(year, month) =
-        let map =
+        let getAvailable =
             reservations
-            |> toReservationMap (Dates.BoundariesIn(Month(year, month)))
+            |> toAvailability (Dates.BoundariesIn(Month(year, month)))
 
         let now = DateTimeOffset.Now
         let openings =
@@ -69,7 +73,7 @@ type AvailabilityController(reservations : Reservations.IReservations,
             |> Seq.map (fun d ->
                 {
                     Date = d.ToString "yyyy.MM.dd"
-                    Seats = if d < now.Date then 0 else getAvailableSeats map d } )
+                    Seats = if d < now.Date then 0 else getAvailable d } )
             |> Seq.toArray
 
         this.Request.CreateResponse(
