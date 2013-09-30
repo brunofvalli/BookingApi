@@ -52,12 +52,12 @@ module ReserverationsTests =
     open Reserverations
 
     [<Theory; TestConventions>]
-    let ReservationsInMemoryAreReservations (sut : InMemory) =
+    let ReservationsInMemoryAreReservations (sut : ReservationsInMemory) =
         Assert.IsAssignableFrom<IReservations>(sut)
     
     [<Theory; TestConventions>]
     let ToReservationsReturnsCorrectResult (expected : Envelope<Reservation> seq) =
-        let actual : InMemory = expected |> ToReservations
+        let actual : ReservationsInMemory = expected |> ToReservations
         Assert.Equal<Envelope<Reservation>>(expected, actual)
 
     [<Theory; TestConventions>]

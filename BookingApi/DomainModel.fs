@@ -22,8 +22,8 @@ module Reserverations =
         inherit seq<Envelope<Reservation>>
         abstract Between : DateTime -> DateTime -> seq<Envelope<Reservation>>
 
-    type InMemory(reservations) =
-        new() = InMemory(Seq.empty<Envelope<Reservation>>)
+    type ReservationsInMemory(reservations) =
+        new() = ReservationsInMemory(Seq.empty<Envelope<Reservation>>)
         interface IReservations with
             member this.Between min max =
                 reservations
@@ -33,7 +33,7 @@ module Reserverations =
             member this.GetEnumerator() =
                 (this :> seq<Envelope<Reservation>>).GetEnumerator() :> System.Collections.IEnumerator
 
-    let ToReservations reservations = InMemory(reservations)
+    let ToReservations reservations = ReservationsInMemory(reservations)
 
     let Between min max (reservations : IReservations) =
         reservations.Between min max
