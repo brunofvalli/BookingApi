@@ -48,6 +48,23 @@ module DatesTests =
             DateTime(year, month, 1).AddDays (float daysInMonth - 1.0),
             actual |> Seq.toList |> List.rev |> List.head)
 
+    [<Theory; TestConventions>]
+    let BoundariesOfYearReturnsCorrectResult (year : int) =
+        let actual : DateTime * DateTime = Dates.BoundariesIn(Year(year))
+
+        let expectedMin = DateTime(year, 1, 1)
+        let expectedMax = DateTime(year + 1, 1, 1).AddTicks -1L
+        Assert.Equal((expectedMin, expectedMax), actual)
+
+    [<Theory; TestConventions>]
+    let BoundariesOfMonthReturnsCorrectResult (year : int) =
+        let month = [1 .. 12] |> PickRandom
+
+        let actual = Dates.BoundariesIn(Month(year, month))
+        let expectedMin = DateTime(year, month, 1)
+        let expectedMax = (expectedMin.AddMonths 1).AddTicks -1L
+        Assert.Equal((expectedMin, expectedMax), actual)
+
 module ReserverationsTests =
     open Reservations
 
