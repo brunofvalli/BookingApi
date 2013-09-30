@@ -45,7 +45,7 @@ type AvailabilityController(reservations : Reservations.IReservations,
 
         let now = DateTimeOffset.Now
         let openings =
-            Dates.InYear year
+            Dates.In(Year(year))
             |> Seq.map (fun d -> 
                 {
                     Date = d.ToString "yyyy.MM.dd"
@@ -59,7 +59,7 @@ type AvailabilityController(reservations : Reservations.IReservations,
     member this.Get(year, month) =
         let now = DateTimeOffset.Now
         let openings =
-            Dates.InMonth year month
+            Dates.In(Month(year, month))
             |> Seq.map (fun d ->
                 {
                     Date = d.ToString "yyyy.MM.dd"

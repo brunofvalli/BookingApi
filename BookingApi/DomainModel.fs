@@ -2,19 +2,20 @@
 
 open System
 
+type Period =
+    | Year of int
+    | Month of int * int
+
 module Dates =
     let InitInfinite (date : DateTime) =
         date |> Seq.unfold (fun d -> Some(d, d.AddDays 1.0))
 
-    let InYear year =
-        DateTime(year, 1, 1)
-        |> InitInfinite
-        |> Seq.takeWhile (fun d -> d.Year = year)
-
-    let InMonth year month =
-        DateTime(year, month, 1)
-        |> InitInfinite
-        |> Seq.takeWhile (fun d -> d.Month = month)
+    let In period =
+        let generate dt predicate =
+            dt |> InitInfinite |> Seq.takeWhile predicate
+        match period with
+        | Year(y) -> generate (DateTime(y, 1, 1)) (fun d -> d.Year = y)
+        | Month(y, m) -> generate (DateTime(y, m, 1)) (fun d -> d.Month = m)
 
 module Reservations =
 

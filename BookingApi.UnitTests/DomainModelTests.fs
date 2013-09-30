@@ -26,7 +26,7 @@ module DatesTests =
 
     [<Theory; TestConventions>]
     let DatesInYearReturnsCorrectResult (year : int) =
-        let actual : DateTime seq = Dates.InYear year
+        let actual : DateTime seq = Dates.In(Year(year))
 
         let daysInYear = System.Globalization.CultureInfo.CurrentCulture.Calendar.GetDaysInYear year
         Assert.Equal(DateTime(year, 1, 1), actual |> Seq.head)
@@ -39,7 +39,7 @@ module DatesTests =
     let DatesInMonthReturnsCorrectResult (year : int) =
         let month = [1 .. 12] |> PickRandom
 
-        let actual : DateTime seq = Dates.InMonth year month
+        let actual : DateTime seq = Dates.In(Month(year, month))
 
         let daysInMonth = System.Globalization.CultureInfo.CurrentCulture.Calendar.GetDaysInMonth(year, month)
         Assert.Equal(DateTime(year, month, 1), actual |> Seq.head)
