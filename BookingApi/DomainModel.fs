@@ -38,7 +38,24 @@ module Reserverations =
     let Between min max (reservations : IReservations) =
         reservations.Between min max
 
-    let On date reservations =
+    let On (date : DateTime) reservations =
         let min = date.Date
         let max = (min.AddDays 1.0) - TimeSpan.FromTicks 1L
         reservations |> Between min max
+
+    let Handle capacity reservations (request : Envelope<MakeReservation>) =
+        let reservedSeatsOnDate =
+            reservations
+            |> On request.Item.Date
+            |> Seq.sumBy (fun r -> r.Item.Quantity)
+        if capacity - reservedSeatsOnDate < request.Item.Quantity then
+            None
+        else
+            Some({
+                    Id = Guid.NewGuid()
+                    Created = DateTimeOffset.Now
+                    Item = {
+                            Date = request.Item.Date
+                            Name = request.Item.Name
+                            Email = request.Item.Email
+                            Quantity = request.Item.Quantity } })

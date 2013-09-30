@@ -91,9 +91,68 @@ module ReserverationsTests =
         let date = reservations |> Array.toList |> PickRandom
         let sut = reservations |> ToReservations
 
-        let actual : Envelope<Reservation> seq = sut |> On date.Item
+        let actual : Envelope<Reservation> seq = sut |> On date.Item.Date
 
         let expected =
             sut
             |> Between date.Item.Date.Date ((date.Item.Date.Date.AddDays 1.0) - TimeSpan.FromTicks 1L)
         Assert.Equal<Envelope<Reservation>>(expected, actual)
+
+    [<Theory; TestConventions>]
+    let HandleOnNoExistingReservationsReturnsCorrectResult(request : Envelope<MakeReservation>) =
+        let capacity = request.Item.Quantity + 10
+        let reservations = [] |> ToReservations
+        let before = DateTimeOffset.Now
+
+        let actual : Envelope<Reservation> option = Handle capacity reservations request
+        
+        Assert.True actual.IsSome
+        Assert.Equal(request.Item.Date, actual.Value.Item.Date)
+        Assert.Equal<string>(request.Item.Name, actual.Value.Item.Name)
+        Assert.Equal<string>(request.Item.Email, actual.Value.Item.Email)
+        Assert.Equal(request.Item.Quantity, actual.Value.Item.Quantity)
+        Assert.NotEqual(Guid.Empty, actual.Value.Id)
+        Assert.NotEqual(request.Id, actual.Value.Id)
+        Assert.NotEqual(request.Created, actual.Value.Created)
+        Assert.True(before <= actual.Value.Created)
+        Assert.True(actual.Value.Created <= DateTimeOffset.Now)
+
+    [<Theory; TestConventions>]
+    let HandleOnSoldOutReturnsCorrectResult(request : Envelope<MakeReservation>,
+                                            name : string,
+                                            email : string,
+                                            capacity : int) =
+        let reservations =
+            {
+                Reservation.Date = request.Item.Date
+                Name = name
+                Email = email
+                Quantity = capacity }
+            |> EnvelopWithDefaults
+            |> Seq.singleton
+            |> ToReservations
+        let actual = Handle capacity reservations request
+        Assert.True actual.IsNone
+
+    [<Theory; TestConventions>]
+    let HandleOnAlmostSoldOutReturnsCorrectResult(requestSeed : Envelope<MakeReservation>,
+                                                  name : string,
+                                                  email : string) =
+        let request = { requestSeed
+                        with Item = { requestSeed.Item
+                                      with Quantity =
+                                            requestSeed.Item.Quantity + 1 } }
+        let capacity = request.Item.Quantity + 10
+        let reservations =
+            {
+                Reservation.Date = request.Item.Date
+                Name = name
+                Email = email
+                Quantity = capacity - 1 }
+            |> EnvelopWithDefaults
+            |> Seq.singleton
+            |> ToReservations
+
+        let actual = Handle capacity reservations request
+        
+        Assert.True actual.IsNone
