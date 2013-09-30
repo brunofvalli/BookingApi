@@ -32,7 +32,7 @@ type AvailabilityController(reservations : Reservations.IReservations,
             seatingCapacity - (map |> Map.find date)
         else seatingCapacity
 
-    let toReservationMap (min, max) reservations =
+    let toMapOfDatesAndQuantities (min, max) reservations =
         reservations
         |> Reservations.Between min max
         |> Seq.groupBy (fun r -> r.Item.Date)
@@ -42,7 +42,7 @@ type AvailabilityController(reservations : Reservations.IReservations,
 
     let toAvailabilityIn period reservations =
         let boundaries = Dates.BoundariesIn period
-        let map = reservations |> toReservationMap boundaries
+        let map = reservations |> toMapOfDatesAndQuantities boundaries
         getAvailableSeats map
 
     member this.Get year =
