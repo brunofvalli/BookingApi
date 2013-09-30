@@ -36,14 +36,14 @@ module ReservationRequestsControllerTests =
 
     [<Theory; TestConventions>]
     let SutIsObservable (sut : ReservationsController) =
-        Assert.IsAssignableFrom<IObservable<MakeReservationCommand>> sut
+        Assert.IsAssignableFrom<IObservable<MakeReservation>> sut
 
     [<Theory; TestConventions>]
     let PostPublishesCorrectCommand(sut : ReservationsController,
                                     rendition : MakeReservationRendition) =        
         let verified = ref false
         let expected = {
-            MakeReservationCommand.Date = DateTime.Parse rendition.Date
+            MakeReservation.Date = DateTime.Parse rendition.Date
             Name = rendition.Name
             Email = rendition.Email
             Quantity = rendition.Quantity }

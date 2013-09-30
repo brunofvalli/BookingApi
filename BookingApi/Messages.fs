@@ -3,7 +3,7 @@
 open System
 
 [<CLIMutable>]
-type MakeReservationCommand = {
+type MakeReservation = {
     Date : DateTime
     Name : string
     Email : string

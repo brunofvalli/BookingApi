@@ -12,7 +12,7 @@ type HomeController() =
 
 type ReservationsController() =
     inherit ApiController()
-    let subject = new Subject<MakeReservationCommand>()
+    let subject = new Subject<MakeReservation>()
     member this.Post (rendition : MakeReservationRendition) =
         subject.OnNext {
             Date = DateTime.Parse rendition.Date
@@ -20,7 +20,7 @@ type ReservationsController() =
             Email = rendition.Email
             Quantity = rendition.Quantity }
         new HttpResponseMessage(HttpStatusCode.Accepted)
-    interface IObservable<MakeReservationCommand> with
+    interface IObservable<MakeReservation> with
         member this.Subscribe observer = subject.Subscribe observer
 
 type AvailabilityController(seatingCapacity : int) =
