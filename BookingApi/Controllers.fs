@@ -46,9 +46,7 @@ type AvailabilityController(reservations : Reservations.IReservations,
         getAvailableSeats map
 
     member this.Get year =
-        let getAvailable =
-            reservations
-            |> toAvailabilityIn(Year(year))
+        let getAvailable = reservations |> toAvailabilityIn(Year(year))
 
         let now = DateTimeOffset.Now
         let openings =
@@ -64,9 +62,7 @@ type AvailabilityController(reservations : Reservations.IReservations,
             { Openings = openings })
 
     member this.Get(year, month) =
-        let getAvailable =
-            reservations
-            |> toAvailabilityIn(Month(year, month))
+        let getAvailable = reservations |> toAvailabilityIn(Month(year, month))
 
         let now = DateTimeOffset.Now
         let openings =
