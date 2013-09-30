@@ -8,6 +8,7 @@ open Ploeh.Samples.Booking.HttpApi
 open Ploeh.Samples.Booking.HttpApi.UnitTests.TestDsl
 open Xunit
 open Xunit.Extensions
+open Ploeh.AutoFixture
 
 module HomeControllerTests =
     [<Theory; TestConventions>]
@@ -108,6 +109,47 @@ module AvailabilityControllerTests =
                 {
                     Date = d.ToString "yyyy.MM.dd"
                     Seats = if d < now.Date then 0 else sut.SeatingCapacity })
+            |> Seq.toArray
+        let expected = { Openings = expectedOpenings }
+        Assert.Equal(expected, actual)
+
+    [<Theory; TestConventions>]
+    let GetYearWithReservationsReturnsCorrectResult(fixture : IFixture,
+                                                    mutableReservations : System.Collections.Generic.List<Envelope<Reservation>>,
+                                                    yearsInFuture : int) =
+        // Fixture setup
+        let reservations = mutableReservations |> Reservations.ToReservations
+        fixture.Inject<Reservations.IReservations> reservations
+        let sut =
+            fixture.Generate<AvailabilityController>()
+            |> Seq.filter (fun c -> c.SeatingCapacity > 1)
+            |> Seq.head
+        
+        let year = DateTime.Now.Year + yearsInFuture
+        let month = [1 .. 12] |> PickRandom
+        let daysInMonth = System.Globalization.CultureInfo.CurrentCulture.Calendar.GetDaysInMonth(year, month)
+        let day = [1 .. daysInMonth] |> PickRandom
+        let reservationInYear =
+            { fixture.Create<Reservation>() with
+                Date = DateTime(year, month, day)
+                Quantity = sut.SeatingCapacity - 1 }
+            |> EnvelopWithDefaults
+        mutableReservations.Add reservationInYear
+
+        // Exercise SUT
+        let response = sut.Get year
+        let actual = response.Content.ReadAsAsync<AvailabilityRendition>().Result        
+        
+        // Verify outcome
+        let expectedOpenings =
+            Dates.InYear year
+            |> Seq.map (fun d ->
+                {
+                    Date = d.ToString "yyyy.MM.dd"
+                    Seats =
+                        if d = reservationInYear.Item.Date
+                        then sut.SeatingCapacity - reservationInYear.Item.Quantity
+                        else sut.SeatingCapacity })
             |> Seq.toArray
         let expected = { Openings = expectedOpenings }
         Assert.Equal(expected, actual)

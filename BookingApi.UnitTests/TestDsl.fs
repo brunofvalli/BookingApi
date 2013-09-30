@@ -37,8 +37,15 @@ type DateStringCustomization() =
                             (context.Resolve typeof<DateTime> :?> DateTime).ToString "yyyy.MM.dd" :> obj
                         | _ -> NoSpecimen(request) :> obj }
 
+type ReservationsCustomization() =
+    interface ICustomization with
+        member this.Customize fixture =
+            fixture.Inject<Ploeh.Samples.Booking.HttpApi.Reservations.IReservations>(
+                [] |> Ploeh.Samples.Booking.HttpApi.Reservations.ToReservations)
+
 type TestConventions() =
     inherit CompositeCustomization(
+        ReservationsCustomization(),
         DateStringCustomization(),
         WebApiCustomization(),
         AutoFoqCustomization())
@@ -53,3 +60,6 @@ let Shuffle source = source |> List.sortBy (fun _ -> r.Next())
 let SelectRandom count source = source |> Shuffle |> Seq.take count
 
 let PickRandom source = source |> SelectRandom 1 |> Seq.head
+
+type IFixture with
+    member this.Generate<'T>() = this.Create<Generator<'T>>()

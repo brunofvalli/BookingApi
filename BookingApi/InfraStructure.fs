@@ -7,6 +7,9 @@ open System.Web.Http.Controllers
 open Ploeh.Samples.Booking.HttpApi
 
 type CompositionRoot() =
+    let seatingCapacity = 10
+    let reservations = [] |> Reservations.ToReservations
+
     interface IHttpControllerActivator with
         member this.Create(request, controllerDescriptor, controllerType) =
             if controllerType = typeof<HomeController> then
@@ -14,7 +17,7 @@ type CompositionRoot() =
             elif controllerType = typeof<ReservationsController> then
                 new ReservationsController() :> IHttpController
             elif controllerType = typeof<AvailabilityController> then
-                new AvailabilityController(10) :> IHttpController
+                new AvailabilityController(reservations, seatingCapacity) :> IHttpController
             else
                 raise
                 <| ArgumentException(

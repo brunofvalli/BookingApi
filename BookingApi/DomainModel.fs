@@ -16,7 +16,7 @@ module Dates =
         |> InitInfinite
         |> Seq.takeWhile (fun d -> d.Month = month)
 
-module Reserverations =
+module Reservations =
 
     type IReservations =
         inherit seq<Envelope<Reservation>>

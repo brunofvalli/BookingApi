@@ -23,16 +23,33 @@ type ReservationsController() =
     interface IObservable<MakeReservation> with
         member this.Subscribe observer = subject.Subscribe observer
 
-type AvailabilityController(seatingCapacity : int) =
+type AvailabilityController(reservations : Reservations.IReservations,
+                            seatingCapacity : int) =
     inherit ApiController()
+
+    let getAvailableSeats map date =
+        if map |> Map.containsKey date then
+            seatingCapacity - (map |> Map.find date)
+        else seatingCapacity
+
     member this.Get year =
+        let firstTickOfYear = DateTime(year, 1, 1)
+        let lastTickofYear = DateTime(year + 1, 1, 1).AddTicks -1L
+        let map =
+            reservations
+            |> Reservations.Between firstTickOfYear lastTickofYear
+            |> Seq.groupBy (fun r -> r.Item.Date)
+            |> Seq.map (fun (d, rs) ->
+                (d, rs |> Seq.map (fun r -> r.Item.Quantity) |> Seq.sum))
+            |> Map.ofSeq
+
         let now = DateTimeOffset.Now
         let openings =
             Dates.InYear year
             |> Seq.map (fun d -> 
                 {
                     Date = d.ToString "yyyy.MM.dd"
-                    Seats = if d < now.Date then 0 else seatingCapacity } )
+                    Seats = if d < now.Date then 0 else getAvailableSeats map d } )
             |> Seq.toArray
 
         this.Request.CreateResponse(

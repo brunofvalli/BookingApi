@@ -49,7 +49,7 @@ module DatesTests =
             actual |> Seq.toList |> List.rev |> List.head)
 
 module ReserverationsTests =
-    open Reserverations
+    open Reservations
 
     [<Theory; TestConventions>]
     let ReservationsInMemoryAreReservations (sut : ReservationsInMemory) =
