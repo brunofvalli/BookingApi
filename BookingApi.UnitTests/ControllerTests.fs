@@ -319,4 +319,40 @@ module AvailabilityControllerTests =
                     Date = DateTime(year, month, day).ToString "yyyy.MM.dd"
                     Seats = 0 }
                 |] }
+        Assert.Equal(expected, actual)    
+
+    [<Theory; TestConventions>]
+    let GetDayWithReservationsReturnsCorrectResult(fixture : IFixture,
+                                                   mutableReservations : System.Collections.Generic.List<Envelope<Reservation>>,
+                                                   yearsInFuture : int) =
+        // Fixture setup
+        let reservations = mutableReservations |> Reservations.ToReservations
+        fixture.Inject<Reservations.IReservations> reservations
+        let sut =
+            fixture.Generate<AvailabilityController>()
+            |> Seq.filter (fun c -> c.SeatingCapacity > 1)
+            |> Seq.head
+        
+        let year = DateTime.Now.Year + yearsInFuture
+        let month = [1 .. 12] |> PickRandom
+        let daysInMonth = System.Globalization.CultureInfo.CurrentCulture.Calendar.GetDaysInMonth(year, month)
+        let day = [1 .. daysInMonth] |> PickRandom
+        let reservationOnDay =
+            { fixture.Create<Reservation>() with
+                Date = DateTime(year, month, day)
+                Quantity = sut.SeatingCapacity - 1 }
+            |> EnvelopWithDefaults
+        mutableReservations.Add reservationOnDay
+
+        // Exercise SUT
+        let response = sut.Get(year, month, day)
+        let actual = response.Content.ReadAsAsync<AvailabilityRendition>().Result        
+        
+        // Verify outcome
+        let expected = {
+            Openings =
+                [| {
+                    Date = DateTime(year, month, day).ToString "yyyy.MM.dd"
+                    Seats = sut.SeatingCapacity - reservationOnDay.Item.Quantity }
+                |] }
         Assert.Equal(expected, actual)
