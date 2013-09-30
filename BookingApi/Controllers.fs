@@ -32,15 +32,18 @@ type AvailabilityController(reservations : Reservations.IReservations,
             seatingCapacity - (map |> Map.find date)
         else seatingCapacity
 
+    let toReservationMap (min, max) reservations =
+        reservations
+        |> Reservations.Between min max
+        |> Seq.groupBy (fun r -> r.Item.Date)
+        |> Seq.map (fun (d, rs) ->
+            (d, rs |> Seq.map (fun r -> r.Item.Quantity) |> Seq.sum))
+        |> Map.ofSeq
+
     member this.Get year =
-        let (min, max) = Dates.BoundariesIn(Year(year))
         let map =
             reservations
-            |> Reservations.Between min max
-            |> Seq.groupBy (fun r -> r.Item.Date)
-            |> Seq.map (fun (d, rs) ->
-                (d, rs |> Seq.map (fun r -> r.Item.Quantity) |> Seq.sum))
-            |> Map.ofSeq
+            |> toReservationMap (Dates.BoundariesIn(Year(year)))
 
         let now = DateTimeOffset.Now
         let openings =
@@ -56,14 +59,9 @@ type AvailabilityController(reservations : Reservations.IReservations,
             { Openings = openings })
 
     member this.Get(year, month) =
-        let (min, max) = Dates.BoundariesIn(Year(year))
         let map =
             reservations
-            |> Reservations.Between min max
-            |> Seq.groupBy (fun r -> r.Item.Date)
-            |> Seq.map (fun (d, rs) ->
-                (d, rs |> Seq.map (fun r -> r.Item.Quantity) |> Seq.sum))
-            |> Map.ofSeq
+            |> toReservationMap (Dates.BoundariesIn(Month(year, month)))
 
         let now = DateTimeOffset.Now
         let openings =
