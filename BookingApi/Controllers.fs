@@ -80,14 +80,12 @@ type AvailabilityController(reservations : Reservations.IReservations,
             reservations
             |> Reservations.On (DateTime(year, month, day))
             |> Seq.sumBy (fun r -> r.Item.Quantity)
+        let availableSeats = seatingCapacity - reservedSeats
 
         let now = DateTimeOffset.Now
-        let requestedDate = DateTimeOffset(DateTime(year, month, day), now.Offset)
-        let opening = {
-            Date = DateTime(year, month, day).ToString "yyyy.MM.dd"
-            Seats = if requestedDate.Date < now.Date
-                    then 0
-                    else seatingCapacity - reservedSeats }
+        let requestedDate = DateTime(year, month, day)
+        let opening = 
+            mapToOpening (fun _ -> availableSeats) now requestedDate
         this.Request.CreateResponse(
             HttpStatusCode.OK,
             { Openings = [| opening |] })
