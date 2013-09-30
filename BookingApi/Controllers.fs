@@ -33,11 +33,10 @@ type AvailabilityController(reservations : Reservations.IReservations,
         else seatingCapacity
 
     member this.Get year =
-        let firstTickOfYear = DateTime(year, 1, 1)
-        let lastTickofYear = DateTime(year + 1, 1, 1).AddTicks -1L
+        let (min, max) = Dates.BoundariesIn(Year(year))
         let map =
             reservations
-            |> Reservations.Between firstTickOfYear lastTickofYear
+            |> Reservations.Between min max
             |> Seq.groupBy (fun r -> r.Item.Date)
             |> Seq.map (fun (d, rs) ->
                 (d, rs |> Seq.map (fun r -> r.Item.Quantity) |> Seq.sum))
