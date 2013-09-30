@@ -40,14 +40,15 @@ type AvailabilityController(reservations : Reservations.IReservations,
             (d, rs |> Seq.map (fun r -> r.Item.Quantity) |> Seq.sum))
         |> Map.ofSeq
 
-    let toAvailability boundaries reservations =
+    let toAvailabilityIn period reservations =
+        let boundaries = Dates.BoundariesIn period
         let map = reservations |> toReservationMap boundaries
         getAvailableSeats map
 
     member this.Get year =
         let getAvailable =
             reservations
-            |> toAvailability (Dates.BoundariesIn(Year(year)))
+            |> toAvailabilityIn(Year(year))
 
         let now = DateTimeOffset.Now
         let openings =
@@ -65,7 +66,7 @@ type AvailabilityController(reservations : Reservations.IReservations,
     member this.Get(year, month) =
         let getAvailable =
             reservations
-            |> toAvailability (Dates.BoundariesIn(Month(year, month)))
+            |> toAvailabilityIn(Month(year, month))
 
         let now = DateTimeOffset.Now
         let openings =
