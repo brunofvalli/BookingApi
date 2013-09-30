@@ -51,11 +51,11 @@ module Reserverations =
         if capacity - reservedSeatsOnDate < request.Item.Quantity then
             None
         else
-            Some({
-                    Id = Guid.NewGuid()
-                    Created = DateTimeOffset.Now
-                    Item = {
-                            Date = request.Item.Date
-                            Name = request.Item.Name
-                            Email = request.Item.Email
-                            Quantity = request.Item.Quantity } })
+            {
+                Date = request.Item.Date
+                Name = request.Item.Name
+                Email = request.Item.Email
+                Quantity = request.Item.Quantity
+            }
+            |> EnvelopWithDefaults
+            |> Some
