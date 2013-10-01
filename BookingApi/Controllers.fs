@@ -27,8 +27,9 @@ type AvailabilityController(reservations : Reservations.IReservations,
                             seatingCapacity : int) =
     inherit ApiController()
 
-    let getAvailableSeats map date =
-        if map |> Map.containsKey date then
+    let getAvailableSeats map (now : DateTimeOffset) date =
+        if date < now.Date then 0
+        elif map |> Map.containsKey date then
             seatingCapacity - (map |> Map.find date)
         else seatingCapacity
 
@@ -40,17 +41,17 @@ type AvailabilityController(reservations : Reservations.IReservations,
             (d, rs |> Seq.map (fun r -> r.Item.Quantity) |> Seq.sum))
         |> Map.ofSeq
 
-    let mapToOpening getAvailableSeats (now : DateTimeOffset) (d : DateTime) =
+    let mapToOpening getAvailableSeats (d : DateTime) =
         {
             Date = d.ToString "yyyy.MM.dd"
-            Seats = if d < now.Date then 0 else getAvailableSeats d
+            Seats = getAvailableSeats d
         }
 
     let getOpeniningsIn period =
         let boundaries = Dates.BoundariesIn period
         let map = reservations |> toMapOfDatesAndQuantities boundaries
-        let getAvailable = getAvailableSeats map
-        let toOpening = DateTimeOffset.Now |> mapToOpening getAvailable
+        let getAvailable = getAvailableSeats map DateTimeOffset.Now
+        let toOpening = mapToOpening getAvailable
         
         Dates.In period
         |> Seq.map toOpening
