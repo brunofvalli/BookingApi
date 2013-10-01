@@ -8,26 +8,9 @@ open System.Web.Http.Controllers
 open Ploeh.Samples.Booking.HttpApi
 open Ploeh.Samples.Booking.HttpApi.Reservations
 
-type Agent<'T> = Microsoft.FSharp.Control.MailboxProcessor<'T>
-
-type CompositionRoot(reservations : System.Collections.Concurrent.ConcurrentBag<Envelope<Reservation>>) =
-    let seatingCapacity = 10
-
-    let agent = new Agent<Envelope<MakeReservation>>(fun inbox ->
-        let rec loop () =
-            async {
-                let! cmd = inbox.Receive()
-                let rs = reservations |> ToReservations
-                let handle = Handle seatingCapacity rs
-                let newReservations = handle cmd
-                match newReservations with
-                | Some(r) -> reservations.Add r
-                | _ -> ()
-                return! loop() }
-        loop())
-    do agent.Start()
-    let agentAsObserver =
-        System.Reactive.Observer.Create (fun cmd -> agent.Post cmd)
+type CompositionRoot(reservations : System.Collections.Concurrent.ConcurrentBag<Envelope<Reservation>>,
+                     reservationRequestObserver,
+                     seatingCapacity) =
 
     interface IHttpControllerActivator with
         member this.Create(request, controllerDescriptor, controllerType) =
@@ -35,7 +18,9 @@ type CompositionRoot(reservations : System.Collections.Concurrent.ConcurrentBag<
                 new HomeController() :> IHttpController
             elif controllerType = typeof<ReservationsController> then
                 let c = new ReservationsController()
-                let sub = (c |> Observable.map EnvelopWithDefaults).Subscribe agentAsObserver
+                let sub = 
+                    (c |> Observable.map EnvelopWithDefaults).Subscribe
+                        reservationRequestObserver
                 request.RegisterForDispose sub
                 c :> IHttpController
             elif controllerType = typeof<AvailabilityController> then
@@ -48,10 +33,10 @@ type CompositionRoot(reservations : System.Collections.Concurrent.ConcurrentBag<
                     sprintf "Unknown controller type requested: %O" controllerType,
                     "controllerType")
 
-let ConfigureServices reservations (config : HttpConfiguration) =
+let ConfigureServices reservations reservationRequestObserver seatingCapacity (config : HttpConfiguration) =
     config.Services.Replace(
         typeof<IHttpControllerActivator>,
-        CompositionRoot(reservations))
+        CompositionRoot(reservations, reservationRequestObserver, seatingCapacity))
 
 type HttpRouteDefaults = { Controller : string; Id : obj }
 
@@ -80,7 +65,7 @@ let ConfigureFormatting (config : HttpConfiguration) =
     config.Formatters.JsonFormatter.SerializerSettings.ContractResolver <-
         Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver()
 
-let Configure reservations config =
+let Configure reservations reservationRequestObserver seatingCapacity config =
     ConfigureRoutes config
-    ConfigureServices reservations config
+    ConfigureServices reservations reservationRequestObserver seatingCapacity config
     ConfigureFormatting config

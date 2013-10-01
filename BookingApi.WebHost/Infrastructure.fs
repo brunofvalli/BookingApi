@@ -3,11 +3,37 @@ namespace Ploeh.Samples.Booking.HttpApi.HttpHost
 open System
 open System.Web.Http
 open Ploeh.Samples.Booking.HttpApi
+open Ploeh.Samples.Booking.HttpApi.Reservations
 open Ploeh.Samples.Booking.HttpApi.InfraStructure
 
 type HttpRouteDefaults = { Controller : string; Id : obj }
 
+type Agent<'T> = Microsoft.FSharp.Control.MailboxProcessor<'T>
+
 type Global() =
     inherit System.Web.HttpApplication()
     member this.Application_Start (sender : obj) (e : EventArgs) =
-        Configure (System.Collections.Concurrent.ConcurrentBag<Envelope<Reservation>>()) GlobalConfiguration.Configuration
+        let seatingCapacity = 10
+        let reservations =
+            System.Collections.Concurrent.ConcurrentBag<Envelope<Reservation>>()
+        let agent = new Agent<Envelope<MakeReservation>>(fun inbox ->
+            let rec loop () =
+                async {
+                    let! cmd = inbox.Receive()
+                    let rs = reservations |> ToReservations
+                    let handle = Handle seatingCapacity rs
+                    let newReservations = handle cmd
+                    match newReservations with
+                    | Some(r) -> reservations.Add r
+                    | _ -> ()
+                    return! loop() }
+            loop())
+        do agent.Start()
+        let agentAsObserver =
+            System.Reactive.Observer.Create (fun cmd -> agent.Post cmd)
+
+        Configure
+            reservations
+            agentAsObserver
+            seatingCapacity
+            GlobalConfiguration.Configuration

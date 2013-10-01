@@ -11,10 +11,17 @@ open Ploeh.Samples.Booking.HttpApi.InfraStructure
 type HttpClientCustomization() =
     interface ICustomization with
         member this.Customize fixture =
+            let configure config =
+                Configure
+                    (System.Collections.Concurrent.ConcurrentBag<Envelope<Reservation>>())
+                    (System.Reactive.Observer.Create (fun _ -> ()))
+                    10
+                    config
+
             let createHttpClient() =
                 let baseUri = fixture.Create<Uri>()
                 let config = new HttpSelfHostConfiguration(baseUri)
-                do  Configure (System.Collections.Concurrent.ConcurrentBag<Envelope<Reservation>>()) config
+                do  configure config
                 let server = new HttpSelfHostServer(config)
                 let client = new HttpClient(server)
                 client.BaseAddress <- baseUri
