@@ -49,6 +49,18 @@ module DatesTests =
             actual |> Seq.toList |> List.rev |> List.head)
 
     [<Theory; TestConventions>]
+    let DatesInDayReturnsCorrectResult (year : int) =
+        let month = [1 .. 12] |> PickRandom
+        let daysInMonth = System.Globalization.CultureInfo.CurrentCulture.Calendar.GetDaysInMonth(year, month)
+        let day = [1 .. daysInMonth] |> PickRandom
+
+        let actual = Dates.In(Day(year, month, day))
+
+        let expected = DateTime(year, month, day)
+        Assert.Equal(1, actual |> Seq.length)
+        Assert.Equal(expected, actual |> Seq.head)
+
+    [<Theory; TestConventions>]
     let BoundariesOfYearReturnsCorrectResult (year : int) =
         let actual : DateTime * DateTime = Dates.BoundariesIn(Year(year))
 
@@ -61,8 +73,21 @@ module DatesTests =
         let month = [1 .. 12] |> PickRandom
 
         let actual = Dates.BoundariesIn(Month(year, month))
+
         let expectedMin = DateTime(year, month, 1)
         let expectedMax = (expectedMin.AddMonths 1).AddTicks -1L
+        Assert.Equal((expectedMin, expectedMax), actual)
+
+    [<Theory; TestConventions>]
+    let BoundariesOfDayReturnsCorrectResult (year : int) =
+        let month = [1 .. 12] |> PickRandom
+        let daysInMonth = System.Globalization.CultureInfo.CurrentCulture.Calendar.GetDaysInMonth(year, month)
+        let day = [1 .. daysInMonth] |> PickRandom
+
+        let actual = Dates.BoundariesIn(Day(year, month, day))
+
+        let expectedMin = DateTime(year, month, day)
+        let expectedMax = (expectedMin.AddDays 1.0).AddTicks -1L
         Assert.Equal((expectedMin, expectedMax), actual)
 
 module ReserverationsTests =
