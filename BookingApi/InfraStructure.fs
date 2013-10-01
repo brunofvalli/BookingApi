@@ -10,10 +10,8 @@ open Ploeh.Samples.Booking.HttpApi.Reservations
 
 type Agent<'T> = Microsoft.FSharp.Control.MailboxProcessor<'T>
 
-type CompositionRoot() =
+type CompositionRoot(reservations : System.Collections.Concurrent.ConcurrentBag<Envelope<Reservation>>) =
     let seatingCapacity = 10
-    let reservations =
-        System.Collections.Concurrent.ConcurrentBag<Envelope<Reservation>>()
 
     let agent = new Agent<Envelope<MakeReservation>>(fun inbox ->
         let rec loop () =
@@ -48,10 +46,10 @@ type CompositionRoot() =
                     sprintf "Unknown controller type requested: %O" controllerType,
                     "controllerType")
 
-let ConfigureServices (config : HttpConfiguration) =
+let ConfigureServices reservations (config : HttpConfiguration) =
     config.Services.Replace(
         typeof<IHttpControllerActivator>,
-        CompositionRoot())
+        CompositionRoot(reservations))
 
 type HttpRouteDefaults = { Controller : string; Id : obj }
 
@@ -80,7 +78,7 @@ let ConfigureFormatting (config : HttpConfiguration) =
     config.Formatters.JsonFormatter.SerializerSettings.ContractResolver <-
         Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver()
 
-let Configure config =
+let Configure reservations config =
     ConfigureRoutes config
-    ConfigureServices config
+    ConfigureServices reservations config
     ConfigureFormatting config

@@ -5,6 +5,7 @@ open System.Net.Http
 open System.Web.Http.SelfHost
 open Ploeh.AutoFixture
 open Ploeh.AutoFixture.Xunit
+open Ploeh.Samples.Booking.HttpApi
 open Ploeh.Samples.Booking.HttpApi.InfraStructure
 
 type HttpClientCustomization() =
@@ -13,7 +14,7 @@ type HttpClientCustomization() =
             let createHttpClient() =
                 let baseUri = fixture.Create<Uri>()
                 let config = new HttpSelfHostConfiguration(baseUri)
-                do  Configure config
+                do  Configure (System.Collections.Concurrent.ConcurrentBag<Envelope<Reservation>>()) config
                 let server = new HttpSelfHostServer(config)
                 let client = new HttpClient(server)
                 client.BaseAddress <- baseUri
