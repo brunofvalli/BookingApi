@@ -40,48 +40,38 @@ type AvailabilityController(reservations : Reservations.IReservations,
             (d, rs |> Seq.map (fun r -> r.Item.Quantity) |> Seq.sum))
         |> Map.ofSeq
 
-    let toAvailabilityIn period reservations =
-        let boundaries = Dates.BoundariesIn period
-        let map = reservations |> toMapOfDatesAndQuantities boundaries
-        getAvailableSeats map
-
     let mapToOpening getAvailableSeats (now : DateTimeOffset) (d : DateTime) =
         {
             Date = d.ToString "yyyy.MM.dd"
             Seats = if d < now.Date then 0 else getAvailableSeats d
         }
 
-    member this.Get year =
-        let getAvailable = reservations |> toAvailabilityIn(Year(year))
+    let getOpeniningsIn period =
+        let boundaries = Dates.BoundariesIn period
+        let map = reservations |> toMapOfDatesAndQuantities boundaries
+        let getAvailable = getAvailableSeats map
         let toOpening = DateTimeOffset.Now |> mapToOpening getAvailable
-        let openings =
-            Dates.In(Year(year))
-            |> Seq.map toOpening
-            |> Seq.toArray
+        
+        Dates.In period
+        |> Seq.map toOpening
+        |> Seq.toArray
+
+    member this.Get year =
+        let openings = getOpeniningsIn(Year(year))
 
         this.Request.CreateResponse(
             HttpStatusCode.OK,
             { Openings = openings })
 
     member this.Get(year, month) =
-        let getAvailable = reservations |> toAvailabilityIn(Month(year, month))
-        let toOpening = DateTimeOffset.Now |> mapToOpening getAvailable
-        let openings =
-            Dates.In(Month(year, month))
-            |> Seq.map toOpening
-            |> Seq.toArray
+        let openings = getOpeniningsIn(Month(year, month))
 
         this.Request.CreateResponse(
             HttpStatusCode.OK,
             { Openings = openings })
 
     member this.Get(year, month, day) =
-        let getAvailable = reservations |> toAvailabilityIn(Day(year, month, day))
-        let toOpening = DateTimeOffset.Now |> mapToOpening getAvailable
-        let openings =
-            Dates.In(Day(year, month, day))
-            |> Seq.map toOpening
-            |> Seq.toArray
+        let openings = getOpeniningsIn(Day(year, month, day))
 
         this.Request.CreateResponse(
             HttpStatusCode.OK,
