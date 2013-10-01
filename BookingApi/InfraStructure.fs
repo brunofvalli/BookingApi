@@ -26,6 +26,8 @@ type CompositionRoot(reservations : System.Collections.Concurrent.ConcurrentBag<
                 return! loop() }
         loop())
     do agent.Start()
+    let agentAsObserver =
+        System.Reactive.Observer.Create (fun cmd -> agent.Post cmd)
 
     interface IHttpControllerActivator with
         member this.Create(request, controllerDescriptor, controllerType) =
@@ -33,7 +35,7 @@ type CompositionRoot(reservations : System.Collections.Concurrent.ConcurrentBag<
                 new HomeController() :> IHttpController
             elif controllerType = typeof<ReservationsController> then
                 let c = new ReservationsController()
-                let sub = (c |> Observable.map EnvelopWithDefaults).Subscribe agent.Post
+                let sub = (c |> Observable.map EnvelopWithDefaults).Subscribe agentAsObserver
                 request.RegisterForDispose sub
                 c :> IHttpController
             elif controllerType = typeof<AvailabilityController> then
