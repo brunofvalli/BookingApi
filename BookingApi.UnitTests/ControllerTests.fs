@@ -9,6 +9,7 @@ open Ploeh.Samples.Booking.HttpApi.UnitTests.TestDsl
 open Xunit
 open Xunit.Extensions
 open Ploeh.AutoFixture
+open Ploeh.AutoFixture.Xunit
 
 module HomeControllerTests =
     [<Theory; TestConventions>]
@@ -361,3 +362,11 @@ module NotificationsControllerTests =
     [<Theory; TestConventions>]
     let SutIsController (sut : NotificationsController) =
         Assert.IsAssignableFrom<ApiController> sut
+
+    [<Theory; TestConventions>]
+    let NotificationsAreExposedForExpection
+        ([<Frozen>]expected : Notifications.INotifications)
+        (sut : NotificationsController) =
+
+        let actual : Notifications.INotifications = sut.Notifications
+        Assert.Equal<Notifications.INotifications>(expected, actual)

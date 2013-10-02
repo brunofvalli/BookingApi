@@ -43,9 +43,18 @@ type ReservationsCustomization() =
             fixture.Inject<Ploeh.Samples.Booking.HttpApi.Reservations.IReservations>(
                 [] |> Ploeh.Samples.Booking.HttpApi.Reservations.ToReservations)
 
+type NotificationsCustomization() =
+    interface ICustomization with
+        member this.Customize fixture =
+            fixture.Customizations.Add(
+                TypeRelay(
+                    typeof<Ploeh.Samples.Booking.HttpApi.Notifications.INotifications>,
+                    typeof<Ploeh.Samples.Booking.HttpApi.Notifications.NotificationsInMemory>))
+
 type TestConventions() =
     inherit CompositeCustomization(
         ReservationsCustomization(),
+        NotificationsCustomization(),
         DateStringCustomization(),
         WebApiCustomization(),
         AutoFoqCustomization())
