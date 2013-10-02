@@ -356,3 +356,8 @@ module AvailabilityControllerTests =
                     Seats = sut.SeatingCapacity - reservationOnDay.Item.Quantity }
                 |] }
         Assert.Equal(expected, actual)
+
+module NotificationsControllerTests =
+    [<Theory; TestConventions>]
+    let SutIsController (sut : NotificationsController) =
+        Assert.IsAssignableFrom<ApiController> sut

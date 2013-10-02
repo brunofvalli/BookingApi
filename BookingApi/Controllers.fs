@@ -79,3 +79,6 @@ type AvailabilityController(reservations : Reservations.IReservations,
             { Openings = openings })
 
     member this.SeatingCapacity = seatingCapacity
+
+type NotificationsController() =
+    inherit ApiController()
