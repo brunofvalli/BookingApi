@@ -20,11 +20,10 @@ type CompositionRoot(reservations : System.Collections.Concurrent.ConcurrentBag<
                 new HomeController() :> IHttpController
             elif controllerType = typeof<ReservationsController> then
                 let c = new ReservationsController()
-                let sub = 
-                    c
-                    |> Observable.map EnvelopWithDefaults
-                    |> Subscribe reservationRequestObserver
-                request.RegisterForDispose sub
+                c
+                |> Observable.map EnvelopWithDefaults
+                |> Subscribe reservationRequestObserver
+                |> request.RegisterForDispose
                 c :> IHttpController
             elif controllerType = typeof<AvailabilityController> then
                 new AvailabilityController(
