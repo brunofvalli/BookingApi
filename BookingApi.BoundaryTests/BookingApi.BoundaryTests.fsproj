@@ -43,6 +43,7 @@
     <Compile Include="HomeJsonTests.fs" />
     <Compile Include="ReservationRequestsJsonTests.fs" />
     <Compile Include="AvailabilityJsonTests.fs" />
+    <Compile Include="NotificationsTests.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Reactive">

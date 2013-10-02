@@ -28,6 +28,8 @@ type CompositionRoot(reservations : IReservations,
                 new AvailabilityController(
                     reservations,
                     seatingCapacity) :> IHttpController
+            elif controllerType = typeof<NotificationsController> then
+                new NotificationsController([] |> Notifications.ToNotifications) :> IHttpController
             else
                 raise
                 <| ArgumentException(
@@ -44,17 +46,17 @@ type HttpRouteDefaults = { Controller : string; Id : obj }
 let ConfigureRoutes (config : HttpConfiguration) =
     config.Routes.MapHttpRoute(
         "AvailabilityYear",
-        "{controller}/{year}",
+        "availability/{year}",
         { Controller = "Availability"; Id = RouteParameter.Optional }) |> ignore
 
     config.Routes.MapHttpRoute(
         "AvailabilityMonth",
-        "{controller}/{year}/{month}",
+        "availability/{year}/{month}",
         { Controller = "Availability"; Id = RouteParameter.Optional }) |> ignore
 
     config.Routes.MapHttpRoute(
         "AvailabilityDay",
-        "{controller}/{year}/{month}/{day}",
+        "availability/{year}/{month}/{day}",
         { Controller = "Availability"; Id = RouteParameter.Optional }) |> ignore
 
     config.Routes.MapHttpRoute(
