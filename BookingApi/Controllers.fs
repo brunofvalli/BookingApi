@@ -84,8 +84,18 @@ type NotificationsController(notifications : Notifications.INotifications) =
     inherit ApiController()
 
     member this.Get id =
+        let toRendition (n : Envelope<Notification>) = {
+            About = n.Item.About.ToString()
+            Type = n.Item.Type
+            Message = n.Item.Message }
+        let matches =
+            notifications
+            |> Notifications.About id
+            |> Seq.map toRendition
+            |> Seq.toArray
+
         this.Request.CreateResponse(
             HttpStatusCode.MovedPermanently,
-            { Notifications = [||] })
+            { Notifications = matches })
 
     member this.Notifications = notifications

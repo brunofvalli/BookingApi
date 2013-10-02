@@ -382,3 +382,21 @@ module NotificationsControllerTests =
         let actual = response.Content.ReadAsAsync<NotificationListRendition>().Result
 
         Assert.Empty(actual.Notifications)
+
+    [<Theory; TestConventions>]
+    let GetWithMatchingNotificationReturnsCorrectResult
+        (sut : NotificationsController) =
+
+        let target = sut.Notifications |> Seq.toList |> PickRandom
+        let id = target.Item.About
+
+        let response = sut.Get id
+        let actual = response.Content.ReadAsAsync<NotificationListRendition>().Result
+
+        let expected = {
+            NotificationRendition.About = target.Item.About.ToString()
+            Type = target.Item.Type
+            Message = target.Item.Message }
+        Assert.Equal(
+            { Notifications = [| expected |] },
+            actual)
