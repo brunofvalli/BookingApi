@@ -27,6 +27,9 @@ type ReservationsController() =
         new HttpResponseMessage(HttpStatusCode.Accepted)
     interface IObservable<Envelope<MakeReservation>> with
         member this.Subscribe observer = subject.Subscribe observer
+    override this.Dispose disposing =
+        if disposing then subject.Dispose()
+        base.Dispose disposing
 
 type AvailabilityController(reservations : Reservations.IReservations,
                             seatingCapacity : int) =
