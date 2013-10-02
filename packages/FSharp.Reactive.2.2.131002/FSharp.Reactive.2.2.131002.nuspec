@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>FSharp.Reactive</id>
-    <version>2.1.131002</version>
+    <version>2.2.131002</version>
     <authors>Ryan Riley,  Steffen Forkmann</authors>
     <owners>Ryan Riley,  Steffen Forkmann</owners>
     <licenseUrl>http://github.com/panesofglass/FSharp.Reactive/raw/master/LICENSE.txt</licenseUrl>
