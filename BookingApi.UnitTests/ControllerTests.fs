@@ -400,3 +400,10 @@ module NotificationsControllerTests =
         Assert.Equal(
             { Notifications = [| expected |] },
             actual)
+
+    [<Theory; TestConventions>]
+    let GetReturnsCorrectStatusCode(sut : NotificationsController, id : Guid) =
+        let response = sut.Get id
+        Assert.True(
+            response.IsSuccessStatusCode,
+            sprintf "Actual status code: %O" response.StatusCode)

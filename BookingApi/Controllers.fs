@@ -95,7 +95,7 @@ type NotificationsController(notifications : Notifications.INotifications) =
             |> Seq.toArray
 
         this.Request.CreateResponse(
-            HttpStatusCode.MovedPermanently,
+            HttpStatusCode.OK,
             { Notifications = matches })
 
     member this.Notifications = notifications
