@@ -4,11 +4,10 @@ open System
 open System.Net.Http
 open System.Web.Http
 open System.Web.Http.Dispatcher
+open FSharp.Reactive
 open System.Web.Http.Controllers
 open Ploeh.Samples.Booking.HttpApi
 open Ploeh.Samples.Booking.HttpApi.Reservations
-
-let Subscribe observer (observable : IObservable<'T>) = observable.Subscribe observer
 
 type CompositionRoot(reservations : IReservations,
                      reservationRequestObserver,
@@ -22,7 +21,7 @@ type CompositionRoot(reservations : IReservations,
                 let c = new ReservationsController()
                 c
                 |> Observable.map EnvelopWithDefaults
-                |> Subscribe reservationRequestObserver
+                |> Observable.subscribeObserver reservationRequestObserver
                 |> request.RegisterForDispose
                 c :> IHttpController
             elif controllerType = typeof<AvailabilityController> then
