@@ -3,6 +3,7 @@ namespace Ploeh.Samples.Booking.HttpApi.HttpHost
 open System
 open System.Reactive
 open System.Web.Http
+open FSharp.Reactive
 open Ploeh.Samples.Booking.HttpApi
 open Ploeh.Samples.Booking.HttpApi.Reservations
 open Ploeh.Samples.Booking.HttpApi.InfraStructure
@@ -19,7 +20,7 @@ type Global() =
             System.Collections.Concurrent.ConcurrentBag<Envelope<Reservation>>()
 
         let reservationEvents = new Subjects.Subject<Envelope<Reservation>>()
-        reservationEvents.Subscribe (fun r -> reservations.Add r) |> ignore
+        reservationEvents.Subscribe reservations.Add |> ignore
 
         let agent = new Agent<Envelope<MakeReservation>>(fun inbox ->
             let rec loop () =
@@ -34,10 +35,9 @@ type Global() =
                     return! loop() }
             loop())
         do agent.Start()
-        let agentAsObserver = Observer.Create (fun cmd -> agent.Post cmd)
 
         Configure
             (reservations |> ToReservations)
-            agentAsObserver
+            (Observer.Create agent.Post)
             seatingCapacity
             GlobalConfiguration.Configuration
