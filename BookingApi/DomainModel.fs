@@ -87,3 +87,5 @@ module Notifications =
                 (this :> Envelope<Notification> seq).GetEnumerator() :> System.Collections.IEnumerator
 
     let ToNotifications notifications = NotificationsInMemory(notifications)
+
+    let About id (notifications : INotifications) = notifications.About id

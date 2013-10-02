@@ -212,7 +212,7 @@ module NotificationsTest =
         Assert.Equal<Envelope<Notification>>(expected, actual)
 
     [<Theory; TestConventions>]
-    let AboutWhenRequestedNotificationIsPresentReturnsCorrectResult
+    let InMemoryAboutWhenRequestedNotificationIsPresentReturnsCorrectResult
         (generator : Generator<Envelope<Notification>>) =
 
         let notifications = generator |> Seq.take 10 |> Seq.toList
@@ -225,7 +225,7 @@ module NotificationsTest =
         Assert.Equal(expected, actual |> Seq.head)
 
     [<Theory; TestConventions>]
-    let AboutWhenRequestedNotificationIsNotPresentReturnsCorrectResult
+    let InMemoryAboutWhenRequestedNotificationIsNotPresentReturnsCorrectResult
         (generator : Generator<Envelope<Notification>>)
         (about : Guid) =
 
@@ -235,3 +235,13 @@ module NotificationsTest =
         let actual = (sut :> INotifications).About about
 
         Assert.True(actual |> Seq.isEmpty)
+
+    [<Theory; TestConventions>]
+    let AboutReturnsCorrectResult(notifications : Envelope<Notification> seq) =
+        let sut = notifications |> ToNotifications
+        let about = (sut |> Seq.toList |> PickRandom).Item.About
+
+        let actual : Envelope<Notification> seq = sut |> About about
+
+        let expected = (sut :> INotifications).About about
+        Assert.Equal<Envelope<Notification>>(expected, actual)
