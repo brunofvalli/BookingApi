@@ -71,3 +71,15 @@ module Reservations =
             }
             |> EnvelopWithDefaults
             |> Some
+
+module Notifications =
+
+    type INotifications =
+        inherit seq<Envelope<Notification>>
+        abstract About : Guid -> Notification option
+
+    type NotificationsInMemory() =
+        interface INotifications with
+            member this.About id = None
+            member this.GetEnumerator() = Seq.empty<Envelope<Notification>>.GetEnumerator()
+            member this.GetEnumerator() = Seq.empty<Envelope<Notification>>.GetEnumerator() :> System.Collections.IEnumerator

@@ -198,3 +198,10 @@ module ReserverationsTests =
         let actual = Handle capacity reservations request
         
         Assert.True actual.IsNone
+
+module NotificationsTest =
+    open Notifications
+
+    [<Theory; TestConventions>]
+    let NotificationsInMemoryAreNotifications (sut : NotificationsInMemory) =
+        Assert.IsAssignableFrom<INotifications> sut

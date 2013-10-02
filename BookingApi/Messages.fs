@@ -31,3 +31,9 @@ type Reservation = {
     Name : string
     Email : string
     Quantity : int }
+
+[<CLIMutable>]
+type Notification = {
+    About : Guid
+    Type : string
+    Message : string }
