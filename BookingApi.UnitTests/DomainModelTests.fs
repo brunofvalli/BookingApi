@@ -205,3 +205,8 @@ module NotificationsTest =
     [<Theory; TestConventions>]
     let NotificationsInMemoryAreNotifications (sut : NotificationsInMemory) =
         Assert.IsAssignableFrom<INotifications> sut
+
+    [<Theory; TestConventions>]
+    let ToNotificationsReturnsCorrectResult (expected : Envelope<Notification> seq) =
+        let actual : NotificationsInMemory = expected |> ToNotifications
+        Assert.Equal<Envelope<Notification>>(expected, actual)
