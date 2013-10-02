@@ -10,7 +10,7 @@ open Ploeh.Samples.Booking.HttpApi.Reservations
 
 let Subscribe observer (observable : IObservable<'T>) = observable.Subscribe observer
 
-type CompositionRoot(reservations : System.Collections.Concurrent.ConcurrentBag<Envelope<Reservation>>,
+type CompositionRoot(reservations : IReservations,
                      reservationRequestObserver,
                      seatingCapacity) =
 
@@ -27,7 +27,7 @@ type CompositionRoot(reservations : System.Collections.Concurrent.ConcurrentBag<
                 c :> IHttpController
             elif controllerType = typeof<AvailabilityController> then
                 new AvailabilityController(
-                    reservations |> ToReservations,
+                    reservations,
                     seatingCapacity) :> IHttpController
             else
                 raise

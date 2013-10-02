@@ -33,7 +33,7 @@ type Global() =
             System.Reactive.Observer.Create (fun cmd -> agent.Post cmd)
 
         Configure
-            reservations
+            (reservations |> ToReservations)
             agentAsObserver
             seatingCapacity
             GlobalConfiguration.Configuration

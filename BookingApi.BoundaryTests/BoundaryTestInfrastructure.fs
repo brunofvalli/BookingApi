@@ -13,7 +13,7 @@ type HttpClientCustomization() =
         member this.Customize fixture =
             let configure config =
                 Configure
-                    (System.Collections.Concurrent.ConcurrentBag<Envelope<Reservation>>())
+                    ([] |> Reservations.ToReservations)
                     (System.Reactive.Observer.Create (fun _ -> ()))
                     10
                     config
