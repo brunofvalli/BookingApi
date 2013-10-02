@@ -38,7 +38,7 @@ module ReservationRequestsControllerTests =
 
     [<Theory; TestConventions>]
     let SutIsObservable (sut : ReservationsController) =
-        Assert.IsAssignableFrom<IObservable<MakeReservation>> sut
+        Assert.IsAssignableFrom<IObservable<Envelope<MakeReservation>>> sut
 
     [<Theory; TestConventions>]
     let PostPublishesCorrectCommand(sut : ReservationsController,
@@ -49,7 +49,7 @@ module ReservationRequestsControllerTests =
             Name = rendition.Name
             Email = rendition.Email
             Quantity = rendition.Quantity }
-        use sub = sut.Subscribe (fun cmd -> verified := expected = cmd)
+        use sub = sut.Subscribe (fun cmd -> verified := expected = cmd.Item)
 
         sut.Post rendition |> ignore
 

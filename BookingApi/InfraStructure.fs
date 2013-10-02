@@ -20,7 +20,6 @@ type CompositionRoot(reservations : IReservations,
             elif controllerType = typeof<ReservationsController> then
                 let c = new ReservationsController()
                 c
-                |> Observable.map EnvelopWithDefaults
                 |> Observable.subscribeObserver reservationRequestObserver
                 |> request.RegisterForDispose
                 c :> IHttpController
