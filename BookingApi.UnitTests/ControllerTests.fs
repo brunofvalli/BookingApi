@@ -370,3 +370,15 @@ module NotificationsControllerTests =
 
         let actual : Notifications.INotifications = sut.Notifications
         Assert.Equal<Notifications.INotifications>(expected, actual)
+
+    [<Theory; TestConventions>]
+    let GetWithoutMatchingNotificationReturnsCorrectResult
+        (sut : NotificationsController)
+        (id : Guid) =
+        
+        Assert.False(sut.Notifications |> Seq.exists (fun n -> n.Item.About = id))
+
+        let response : HttpResponseMessage = sut.Get id
+        let actual = response.Content.ReadAsAsync<NotificationListRendition>().Result
+
+        Assert.Empty(actual.Notifications)

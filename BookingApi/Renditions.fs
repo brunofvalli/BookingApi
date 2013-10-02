@@ -17,3 +17,13 @@ type OpeningsRendition = {
 [<CLIMutable>]
 type AvailabilityRendition = {
     Openings : OpeningsRendition array }
+
+[<CLIMutable>]
+type NotificationRendition = {
+    About : string
+    Type : string
+    Message : string }
+
+[<CLIMutable>]
+type NotificationListRendition = {
+    Notifications : NotificationRendition array }

@@ -83,4 +83,9 @@ type AvailabilityController(reservations : Reservations.IReservations,
 type NotificationsController(notifications : Notifications.INotifications) =
     inherit ApiController()
 
+    member this.Get id =
+        this.Request.CreateResponse(
+            HttpStatusCode.MovedPermanently,
+            { Notifications = [||] })
+
     member this.Notifications = notifications
