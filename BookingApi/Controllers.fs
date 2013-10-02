@@ -12,7 +12,9 @@ type HomeController() =
 
 type ReservationsController() =
     inherit ApiController()
+    
     let subject = new Subject<Envelope<MakeReservation>>()
+
     member this.Post (rendition : MakeReservationRendition) =
         let cmd =
             {
@@ -24,9 +26,17 @@ type ReservationsController() =
             |> EnvelopWithDefaults
         subject.OnNext cmd
 
-        new HttpResponseMessage(HttpStatusCode.Accepted)
+        this.Request.CreateResponse(
+            HttpStatusCode.Accepted,
+            {
+                Links =
+                    [| {
+                        Rel = "http://ploeh.samples/notification"
+                        Href = "notifications/" + cmd.Id.ToString "N" } |] })
+
     interface IObservable<Envelope<MakeReservation>> with
         member this.Subscribe observer = subject.Subscribe observer
+
     override this.Dispose disposing =
         if disposing then subject.Dispose()
         base.Dispose disposing

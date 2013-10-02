@@ -55,6 +55,22 @@ module ReservationRequestsControllerTests =
 
         Assert.True(!verified, "Command should be published")
 
+    [<Theory; TestConventions>]
+    let PostReturnsNotificationLink
+        (sut : ReservationsController)
+        (rendition : MakeReservationRendition) =
+
+        let response = sut.Post rendition
+        let actual = response.Content.ReadAsAsync<LinkListRendition>().Result
+
+        Assert.Equal(1, actual.Links.Length)
+        Assert.True(actual.Links.[0].Href.Contains("notifications/"))
+        let slashIndex = actual.Links.[0].Href.LastIndexOf("/")
+        let id = actual.Links.[0].Href.Substring(slashIndex + 1)
+        let isGuid, g = Guid.TryParse id
+        Assert.True isGuid
+        Assert.NotEqual(Guid.Empty, g)
+
 module AvailabilityControllerTests =
     [<Theory; TestConventions>]
     let SutIsController (sut : AvailabilityController) =

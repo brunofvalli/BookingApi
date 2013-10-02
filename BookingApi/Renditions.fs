@@ -27,3 +27,12 @@ type NotificationRendition = {
 [<CLIMutable>]
 type NotificationListRendition = {
     Notifications : NotificationRendition array }
+
+[<CLIMutable>]
+type AtomLinkRendition = {
+    Rel : string
+    Href : string }
+
+[<CLIMutable>]
+type LinkListRendition = {
+    Links : AtomLinkRendition array }
