@@ -11,6 +11,7 @@ open Ploeh.Samples.Booking.HttpApi.Reservations
 
 type CompositionRoot(reservations : IReservations,
                      reservationRequestObserver,
+                     notifications,
                      seatingCapacity) =
 
     interface IHttpControllerActivator with
@@ -28,17 +29,17 @@ type CompositionRoot(reservations : IReservations,
                     reservations,
                     seatingCapacity) :> IHttpController
             elif controllerType = typeof<NotificationsController> then
-                new NotificationsController([] |> Notifications.ToNotifications) :> IHttpController
+                new NotificationsController(notifications) :> IHttpController
             else
                 raise
                 <| ArgumentException(
                     sprintf "Unknown controller type requested: %O" controllerType,
                     "controllerType")
 
-let ConfigureServices reservations reservationRequestObserver seatingCapacity (config : HttpConfiguration) =
+let ConfigureServices reservations reservationRequestObserver notifications seatingCapacity (config : HttpConfiguration) =
     config.Services.Replace(
         typeof<IHttpControllerActivator>,
-        CompositionRoot(reservations, reservationRequestObserver, seatingCapacity))
+        CompositionRoot(reservations, reservationRequestObserver, notifications, seatingCapacity))
 
 type HttpRouteDefaults = { Controller : string; Id : obj }
 
@@ -67,7 +68,7 @@ let ConfigureFormatting (config : HttpConfiguration) =
     config.Formatters.JsonFormatter.SerializerSettings.ContractResolver <-
         Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver()
 
-let Configure reservations reservationRequestObserver seatingCapacity config =
+let Configure reservations reservationRequestObserver notifications seatingCapacity config =
     ConfigureRoutes config
-    ConfigureServices reservations reservationRequestObserver seatingCapacity config
+    ConfigureServices reservations reservationRequestObserver notifications seatingCapacity config
     ConfigureFormatting config

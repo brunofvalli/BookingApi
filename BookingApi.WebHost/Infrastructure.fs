@@ -18,9 +18,17 @@ type Global() =
         let seatingCapacity = 10
         let reservations =
             System.Collections.Concurrent.ConcurrentBag<Envelope<Reservation>>()
+        let notifications =
+            System.Collections.Concurrent.ConcurrentBag<Envelope<Notification>>()
 
-        let reservationEvents = new Subjects.Subject<Envelope<Reservation>>()
-        reservationEvents.Subscribe reservations.Add |> ignore
+        let reservationSubject = new Subjects.Subject<Envelope<Reservation>>()
+        reservationSubject.Subscribe reservations.Add |> ignore
+
+        let notificationSubject = new Subjects.Subject<Notification>()
+        notificationSubject
+        |> Observable.map EnvelopWithDefaults
+        |> Observable.subscribe notifications.Add ignore ignore
+        |> ignore
 
         let agent = new Agent<Envelope<MakeReservation>>(fun inbox ->
             let rec loop () =
@@ -30,8 +38,27 @@ type Global() =
                     let handle = Handle seatingCapacity rs
                     let newReservations = handle cmd
                     match newReservations with
-                    | Some(r) -> reservationEvents.OnNext r
-                    | _ -> ()
+                    | Some(r) ->
+                        reservationSubject.OnNext r
+                        notificationSubject.OnNext
+                            {
+                                About = cmd.Id
+                                Type = "Success"
+                                Message =
+                                    sprintf
+                                        "Your reservation for %s was completed. We look forward to see you."
+                                        (cmd.Item.Date.ToString "yyyy.MM.dd")
+                            }
+                    | _ ->
+                        notificationSubject.OnNext
+                            {
+                                About = cmd.Id
+                                Type = "Failure"
+                                Message =
+                                    sprintf
+                                        "We regret to inform you that your reservation for %s could not be completed, because we are already fully booked."
+                                        (cmd.Item.Date.ToString "yyyy.MM.dd")
+                            }
                     return! loop() }
             loop())
         do agent.Start()
@@ -39,5 +66,6 @@ type Global() =
         Configure
             (reservations |> ToReservations)
             (Observer.Create agent.Post)
+            (notifications |> Notifications.ToNotifications)
             seatingCapacity
             GlobalConfiguration.Configuration

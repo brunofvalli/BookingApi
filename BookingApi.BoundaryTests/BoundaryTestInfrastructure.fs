@@ -15,6 +15,7 @@ type HttpClientCustomization() =
                 Configure
                     ([] |> Reservations.ToReservations)
                     (System.Reactive.Observer.Create (fun _ -> ()))
+                    ([] |> Notifications.ToNotifications)
                     10
                     config
 
