@@ -1,0 +1,1 @@
+<%@ Application Inherits="Ploeh.Samples.Booking.HttpApi.HttpHost.Global" %>
